@@ -1,2 +1,2 @@
 # shop
-一个基于uni-app的商城app
+一个基于uni-app的下单维修管理app
