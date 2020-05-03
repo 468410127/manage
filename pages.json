@@ -26,6 +26,22 @@
 			}
 		},
 		{
+			"path": "pages/details/index",
+			"style": {
+				"app-plus" : {
+					"titleNView" : false
+				}
+			}
+		},
+		{
+			"path": "pages/finish/index",
+			"style": {
+				"app-plus" : {
+					"titleNView" : false
+				}
+			}
+		},
+		{
 			"path": "pages/cart/index",
 			"style": {
 				"navigationBarTitleText" : "购物车"

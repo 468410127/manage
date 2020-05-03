@@ -15,7 +15,7 @@
 <style>
 	/*每个页面公共css */
 	@import "./common/css/icon.css";
-	@import "./common/common.css";
+	@import "./common/css/common.css";
 	
 	/*官方css库*/
 	@import "./common/css/uni.css"

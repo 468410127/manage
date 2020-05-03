@@ -1,51 +1,32 @@
 <template>
-	<view class="submit">
-		<view class="textarea">
-			<view class="uni-textarea">
-				<textarea v-model='text' placeholder="请简单描述一下保修的内容,以便我们更好的处理..." />
-			</view>
-			<!-- 上传多图 -->
-			<!-- <view class="uni-list list-pd">
-				<view class="uni-list-cell cell-pd">
-					<view class="uni-uploader">
-						<view class="uni-uploader-head">
-							<view class="uni-uploader-title">点击可预览选好的图片</view>
-							<view class="uni-uploader-info">{{imageList.length}}/9</view>
-						</view>
-						<view class="uni-uploader-body">
-							<view class="uni-uploader__files">
-								<block v-for="(image,index) in imageList" :key="index">
-									<view class="uni-uploader__file">
-										<view class="delete" @tap="delate(index)">
-											X
-										</view>
-										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
-									</view>
-								</block>
-								<view class="uni-uploader__input-box">
-									<view class="uni-uploader__input" @tap="chooseImage"></view>
+	<view class="uni-list list-pd">
+		<view class="uni-list-cell cell-pd">
+			<view class="uni-uploader">
+				<view class="uni-uploader-head">
+					<view class="uni-uploader-title">点击可预览选好的图片</view>
+					<view class="uni-uploader-info">{{imageList.length}}/9</view>
+				</view>
+				<view class="uni-uploader-body">
+					<view class="uni-uploader__files">
+						<block v-for="(image,index) in imageList" :key="index">
+							<view class="uni-uploader__file">
+								<view class="delete" @tap="delate(index)">
+									X
 								</view>
+								<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
 							</view>
+						</block>
+						<view class="uni-uploader__input-box">
+							<view class="uni-uploader__input" @tap="chooseImage"></view>
 						</view>
 					</view>
 				</view>
-			</view> -->
-			<upload-images @upload='upload'></upload-images>
-			
+			</view>
 		</view>
-		<view class="footer">
-			<button type='primary' class="btn">提交</button>
-			
-		</view>
-		
-		
-		
-		
 	</view>
 </template>
 
 <script>
-	import uploadImages from '@/components/upload-images.vue'
 	var sourceType = [
 		['camera'],
 		['album'],
@@ -57,13 +38,8 @@
 		['compressed', 'original']
 	]
 	export default {
-		components: {
-			uploadImages
-		},
-		data(){
+		data() {
 			return {
-				text: '',
-				imglist: [],
 				imageList: [],
 				sourceTypeIndex: 2,
 				sourceType: ['拍照', '相册', '拍照或相册'],
@@ -72,13 +48,10 @@
 				countIndex: 8,
 				count: [1, 2, 3, 4, 5, 6, 7, 8, 9]
 				
-			}
-		},
-		methods: {
-			upload(arr) {
-				this.imglist = arr;
 				
-			},
+			};
+		},
+		methods: { 
 			delate(index) {
 				uni.showModal({
 					title: '提示',
@@ -86,6 +59,7 @@
 					success: (res)=> {
 						if(res.confirm){
 							this.imageList.splice(index,1)
+							this.$emit('upload', this.imageList)
 						}
 					}
 				})
@@ -110,7 +84,7 @@
 					}
 				}
 				// #endif
-		
+					
 				if (this.imageList.length === 9) {
 					let isContinue = await this.isFullImg();
 					console.log("是否继续?", isContinue);
@@ -124,6 +98,7 @@
 					count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length : this.count[this.countIndex],
 					success: (res) => {
 						this.imageList = this.imageList.concat(res.tempFilePaths);
+						this.$emit('upload', this.imageList)
 					},
 					fail: (err) => {
 						// #ifdef APP-PLUS
@@ -195,7 +170,7 @@
 				let status = permision.isIOS ? await permision.requestIOS(sourceType[type][0]) :
 					await permision.requestAndroid(type === 0 ? 'android.permission.CAMERA' :
 						'android.permission.READ_EXTERNAL_STORAGE');
-		
+					
 				if (status === null || status === 1) {
 					status = 1;
 				} else {
@@ -209,13 +184,37 @@
 						}
 					})
 				}
-		
+					
 				return status;
 			}
+			
 		}
 	}
 </script>
 
-<style>
-	@import './index.css'
+<style lang="less" scoped>
+	.cell-pd {
+			padding: 22rpx 30rpx;
+		}
+	
+		.list-pd {
+			/* margin-top: 50rpx; */
+		}
+		.uni-uploader__file {
+			position: relative;
+		}
+		.delete {
+			position: absolute;
+			right: 0;
+			top:0;
+			/* background: #333; */
+			color: #fff;
+			z-index: 2;
+			width: 40rpx;
+		}
+		
+		.uni-list::before {
+			height: 0;
+		} 
+
 </style>

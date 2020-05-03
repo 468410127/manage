@@ -6,7 +6,7 @@
 					{{item.date}}
 					
 				</view>
-				<view class="item">
+				<view class="item" @tap="goDetails(item)">
 					
 					<view class="header">
 						<view class="title">
@@ -46,6 +46,12 @@
 		},
 		onLoad(){
 			console.log(this.list, 'rrrrlist')
+		},
+		methods: {
+			goDetails(value){
+				this.$emit('goJump',value)
+				
+			}
 		}
 	}
 </script>

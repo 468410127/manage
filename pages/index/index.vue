@@ -44,7 +44,7 @@
 							</scroll-view>
 						</swiper-item>
 					</swiper> -->
-					<index-list :list='list' :index="tabIndex"></index-list>
+					<index-list :list='list' :index="tabIndex" @goJump="handleJump"></index-list>
 				</view>
 				<view class="main-footer">
 					<button type="default" hover-class="btn-hover" @tap="goSubmit">报时保修</button>
@@ -153,6 +153,11 @@
 			goSubmit(){
 				uni.navigateTo({
 					url: '/pages/submit/index'
+				})
+			},
+			handleJump(value){
+				uni.navigateTo({
+					url: '/pages/details/index'
 				})
 			}
 		}
