@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import  {setUserInfo, getUserInfo } from '../common/js/auth.js'
 
 Vue.use(Vuex)
 
@@ -7,13 +8,20 @@ const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
 		userHeadimg: "/static/logo.png",
-		userName: "",
+		userInfo: getUserInfo(),
 		gender: "男",
 		addressList: [],
 		cartList: [],
-		total: 0
+		total: 0,
+		user: null,
+		qiniuUrl :'http://q9oi24cdo.bkt.clouddn.com/'
 	},
 	mutations: {
+		SET_USER:(state, data) => {
+			 state.userInfo = data;
+			 setUserInfo(data);
+			
+		},
 		login(state) {
 			state.hasLogin = true;
 		},

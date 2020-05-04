@@ -10,10 +10,7 @@
 						<view class="name">
 						复地连城国际花园333333
 						</view>
-						<i class="iconfont icon-icon-test3 back">
-							
-						</i>
-						
+						<i class="iconfont icon-icon-test3 back"></i>
 					</view>
 					<view class="uni-tab-bar">
 						<scroll-view scroll-y="true" class="uni-swiper-tab">
@@ -21,19 +18,12 @@
 								<view class="swiper-tab-list" :class="{'active':tabIndex == index}" @tap="tabtap(index)">
 									{{tab.name}}
 									<view class="swiper-tab-line">
-										
 									</view>
 								</view>
-								
 							</block>
-							
-							
 						</scroll-view>
 					</view>
-					
 				</view>
-				
-				
 				<view class="uni-tab-bar-list">
 					<!-- <swiper class="swiper-box" :style="{height: swiperHeight+'px'}" :current="tabIndex" @change="tabChange">
 						<swiper-item v-for="(items,index) in dataList" :key="index">
@@ -47,8 +37,8 @@
 					<index-list :list='list' :index="tabIndex" @goJump="handleJump"></index-list>
 				</view>
 				<view class="main-footer">
-					<button type="default" hover-class="btn-hover" @tap="goSubmit">报时保修</button>
-					<button type='primary'>我的提交</button>
+					<button type="primary" hover-class="btn-hover" @tap="goSubmit">报事保修</button>
+					<!-- <button type='primary'>我的提交</button> -->
 				</view>
 			</view>
 			
@@ -59,6 +49,7 @@
 
 <script>
 	import indexList from '@/components/index-list.vue'
+	import { Position,Status } from '@/common/js/enum.js';
 	export default {
 		components: {
 			indexList
@@ -88,51 +79,7 @@
 						id: 4
 					}
 				],
-				list: [
-						{
-							date: '2020/4/1',
-							status: '待处理',
-							content: '灯坏掉了找人来修，来看看',
-							address: '室内'
-						},
-							{
-								date: '2020/4/1',
-								status: '待处理',
-								content: '灯坏掉了找人来修，来看看',
-								address: '室内'
-							},
-							{
-								date: '2020/4/1',
-								status: '待处理',
-								content: '灯坏掉了找人来修，来看看',
-								address: '室内'
-							},
-							{
-								date: '2020/4/1',
-								status: '待处理',
-								content: '灯坏掉了找人来修，来看看',
-								address: '室内'
-							},
-							{
-								date: '2020/4/1',
-								status: '待处理',
-								content: '灯坏掉了找人来修，来看看',
-								address: '室内'
-							},
-							{
-								date: '2020/4/1',
-								status: '待处理',
-								content: '灯坏掉了找人来修，来看看',
-								address: '室内'
-							},
-							{
-								date: '2020/4/1',
-								status: '待处理',
-								content: '灯坏掉了找人来修，来看看',
-								address: '室内'
-							},
-					
-				]
+				list: []
 			}
 		},
 		onLoad(){
@@ -143,12 +90,31 @@
 				}
 				
 			})
+			this.init();
+			
+		},
+		mounted(){
+			// this.init();
 			
 		},
 		methods: {
+			init(){
+				this.$api.httpRequest({
+					url: `/pro_Servers/repair/`,
+					method: 'get'
+				}).then(res => {
+					const data = res.infos || [];
+					data.forEach(item => {
+						item.adress = Position[item.position].name
+						item.status = Status[item.repairStates].name
+					})
+					this.list = data;
+					console.log(data, 'data')
+				})
+				
+			},
 			tabtap(index) {
 				this.tabIndex = index;
-				
 			},
 			goSubmit(){
 				uni.navigateTo({
@@ -156,8 +122,9 @@
 				})
 			},
 			handleJump(value){
+				// console.log(value, '88888')
 				uni.navigateTo({
-					url: '/pages/details/index'
+					url: `/pages/details/index?repariID=${value.repariID}`
 				})
 			}
 		}

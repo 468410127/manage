@@ -1,69 +1,67 @@
 <template>
 	<view class="details">
 		<view class="details-content">
-				<view class="details-fix">
-					<view class="uni-tab-bar">
-						<scroll-view scroll-y="true" class="uni-swiper-tab">
-							<block v-for="(tab,index) in tabBars" :key="tab.id">
-								<view class="swiper-tab-list" :class="{'active':tabIndex == index}" @tap="tabtap(index)">
-									{{tab.name}}
-									<view class="swiper-tab-line">
-									</view>
-								</view>
-							</block>
-						</scroll-view>
-					</view>
-				</view>
-				<view class="details-list">
-					<view class="header">
-						<view class="title">
-							{{details.title}}
-						</view>
-						<view class="status">
-							{{details.status}}
-						</view>
-						
-					</view>
-					<view class="content">
-						<block v-for="(item,index) in details.dataList" :key="index">
-							<view class="panel">
-								<view class="left">
-									{{item.key}}
-								</view>
-								<view class="right">
-									{{item.value}}
+			<view class="details-fix">
+				<view class="uni-tab-bar">
+					<scroll-view scroll-y="true" class="uni-swiper-tab">
+						<block v-for="(tab,index) in tabBars" :key="tab.id">
+							<view class="swiper-tab-list" :class="{'active':tabIndex == index}" @tap="tabtap(index)">
+								{{tab.name}}
+								<view class="swiper-tab-line">
 								</view>
 							</view>
 						</block>
+					</scroll-view>
+				</view>
+			</view>
+			<view class="details-list">
+				<view class="header">
+					<view class="title">
+						{{address}}
+					</view>
+					<view class="status">
+						{{status}}
 					</view>
 				</view>
-				<view class="details-footer">
-					<!-- <button type="primary" hover-class="btn-hover" @tap="goSubmit">报时保修</button> -->
-					
-					<view class="utils">
-						<block v-for="(item, index) in tabList" :key="index">
-							<view class="list" @tap="goJump(item.path)">
-								<i class="iconfont icon-icon-test3">
-								</i>
-								<view class="tab-name">
-									{{item.name}}
-								</view>
+				<view class="content">
+					<block v-for="(item,index) in details.dataList" :key="index">
+						<view class="panel">
+							<view class="left">
+								{{item.key}}
 							</view>
-							
-						</block>
-						
-						
-					</view>
+							<view class="right">
+								{{item.value}}
+							</view>
+						</view>
+					</block>
 				</view>
-			
-			
+			</view>
+			<view class="details-footer">
+				<!-- <button type="primary" hover-class="btn-hover" @tap="goSubmit">报时保修</button> -->
+				<view class="utils">
+					<block v-for="(item, index) in tabList" :key="index">
+						<view class="list" @tap="goJump(item.path)">
+							<i class="iconfont icon-icon-test3">
+							</i>
+							<view class="tab-name">
+								{{item.name}}
+							</view>
+						</view>
+					</block>
+				</view>
+			</view>
 		</view>
-		
 	</view>
 </template>
 
 <script>
 	import indexList from '@/components/index-list.vue'
+	import { Position,Status } from '@/common/js/enum.js';
+	const Map = {
+		key: ['expectTime', 'user', 'telephone', 'repairInfo', 'repariID', 'repairDes'],
+		value: ['期待上门时间', '提交人', '联系电话', '报修地址', '工单编号', '报修内容']
+		
+	}
 	export default {
 		components: {
 			indexList
@@ -84,8 +82,6 @@
 					
 				],
 				details: {
-					title: '室内',
-					status: '未处理',
 					dataList: [
 						{
 							key: '期待上门时间',
@@ -134,11 +130,17 @@
 						name: '关闭工单',
 						path: 'finish'
 					}
-				]
+				],
+				data: null,
+				address: '',
+				status: ''
 				
 			}
 		},
-		onLoad(){
+		onLoad(options){
+			// option
+			// console.log(options, 'options');
+			this.init(options.repariID);
 			uni.getSystemInfo({
 				success: (res) => {
 					let height = res.windowHeight - uni.upx2px(100);
@@ -149,6 +151,28 @@
 			
 		},
 		methods: {
+			init(repariID){
+				this.$api.httpRequest({
+					url: `/pro_Servers/repair/repId/${repariID}`,
+					method: 'get'
+				}).then(res => {
+					// console.log(res, 'detail')
+					if(res.status === 'ok'){
+						const data = res.t || {};
+						// this.data = {
+						// 	...data,
+						// };
+						// console.log(Position, data.position, data.repairStates, '999999')
+						this.address = Position[data.position].name;
+						this.status = Status[data.repairStates].name;
+						// this.
+						console.log(this.$store.state.userName, this.data, 'data')
+						
+						
+					}
+				})
+				
+			},
 			tabtap(index) {
 				this.tabIndex = index;
 				

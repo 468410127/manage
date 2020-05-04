@@ -3,24 +3,22 @@
 		<block v-for="(item, index) in list" :key='index'>
 			<view class="panel">
 				<view class="date">
-					{{item.date}}
+					{{item.update_Tm}}
 					
 				</view>
 				<view class="item" @tap="goDetails(item)">
-					
 					<view class="header">
 						<view class="title">
-							{{item.address}}
+							{{item.adress}}
 						</view>
 						<view class="status">
 							{{item.status}}
 							<i class="iconfont icon-icon-test3">
-								
 							</i>
 						</view>
 					</view>
 					<view class="content">
-						{{item.content}}
+						{{item.repairDes}}
 					</view>
 					
 					
@@ -31,8 +29,11 @@
 		</block>
 	</view>
 </template>
+<!-- 
+import indexList from '@/components/index-list.vue' -->
 
 <script>
+	import { Position } from '@/common/js/enum.js';
 	export default {
 		props: {
 			list: Array,
@@ -45,7 +46,10 @@
 			};
 		},
 		onLoad(){
-			console.log(this.list, 'rrrrlist')
+			
+		},
+		created(){
+			console.log(this.list, Position[0].name, '333333rrrrlist')
 		},
 		methods: {
 			goDetails(value){

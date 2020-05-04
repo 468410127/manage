@@ -58,12 +58,13 @@
 .main-footer {
 	position: fixed;
 	bottom: 0;
-	display: flex;
+	/* display: flex; */
 	width: 100%;
 }
-button {
+/* button {
 	width: 50%;
-}
+} */
 uni-button,uni-button:after  {
 	border-radius: 0;
 }
+

@@ -29,6 +29,10 @@
 		onLoad() {
 			this.height = uni.getSystemInfoSync().screenHeight-67 +"px";
 		},
+		// mounted(){
+		// 	this.login();
+			
+		// },
 		methods: {
 			...mapMutations(['login','changeUserName']),
 			go(url) {
@@ -36,26 +40,40 @@
 					url: url
 				})
 			},
+			login(){
+				this.$api.httpRequest({
+					url: `/pro_Servers/users/login/${this.mynote.phone}/1`,
+					method: 'POST'
+				}).then(res => {
+					if(res.status === "ok"){
+						this.$store.commit("userName", ...res.t)
+					}
+					uni.navigateTo({
+						url: '/pages/index/index'
+					})
+				})
+			},
 			login1() {
-				this.login()
+				// this.login()
 				uni.switchTab({
 					url: '../mine/index'
 				});
 			},
 			formSubmit(e) {
-				if(this.mynote.phone == "admin" && this.mynote.password == 123456){
-					this.login();
-					this.changeUserName(this.mynote.phone);
-					uni.setStorageSync('info',{userName: this.mynote.phone,password: this.mynote.password});
-					uni.switchTab({
-						url: '../mine/index'
-					});
-				}else{
-					uni.showToast({
-						title: "您输入的账号或者密码不正确",
-						icon: 'none'
-					})
-				}
+				this.login();
+				// if(this.mynote.phone == "wang" && this.mynote.password == 1){
+				// 	this.login();
+				// 	this.changeUserName(this.mynote.phone);
+				// 	uni.setStorageSync('info',{userName: this.mynote.phone,password: this.mynote.password});
+				// 	uni.switchTab({
+				// 		url: '../index/index'
+				// 	});
+				// }else{
+				// 	uni.showToast({
+				// 		title: "您输入的账号或者密码不正确",
+				// 		icon: 'none'
+				// 	})
+				// }
 			},
 			verify(e) {
 				var id = e.currentTarget.id;

@@ -4,48 +4,56 @@
 			<view class="uni-textarea">
 				<textarea v-model='text' placeholder="请简单描述一下保修的内容,以便我们更好的处理..." />
 			</view>
-			<!-- 上传多图 -->
-			<!-- <view class="uni-list list-pd">
-				<view class="uni-list-cell cell-pd">
-					<view class="uni-uploader">
-						<view class="uni-uploader-head">
-							<view class="uni-uploader-title">点击可预览选好的图片</view>
-							<view class="uni-uploader-info">{{imageList.length}}/9</view>
+			<view class="uni-list">
+				<radio-group @change="radioChange">
+					<label class="uni-list-cell uni-list-cell-pd" v-for="(item, index) in items" :key="item.value">
+						<view>
+							<radio :value="item.value" :checked="index === current" />
 						</view>
-						<view class="uni-uploader-body">
-							<view class="uni-uploader__files">
-								<block v-for="(image,index) in imageList" :key="index">
-									<view class="uni-uploader__file">
-										<view class="delete" @tap="delate(index)">
-											X
-										</view>
-										<image class="uni-uploader__img" :src="image" :data-src="image" @tap="previewImage"></image>
-									</view>
-								</block>
-								<view class="uni-uploader__input-box">
-									<view class="uni-uploader__input" @tap="chooseImage"></view>
-								</view>
-							</view>
-						</view>
+						<view>{{item.name}}</view>
+					</label>
+				</radio-group>
+			</view>
+			<input v-show='current === 1' class="uni-input" v-model='detailPosition' focus placeholder="请输入具体室外地址" />
+			
+		
+			<view class="uni-list">
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-left">
+						当前期望上门时间
+					</view>
+					<view class="uni-list-cell-db">
+						<picker mode="time" :value="time" start="09:01" end="21:01" @change="bindTimeChange">
+							<view class="uni-input">{{time}}</view>
+						</picker>
 					</view>
 				</view>
-			</view> -->
-			<upload-images @upload='upload'></upload-images>
-			
+			</view>
+			<view class="uni-list">
+				<view class="uni-list-cell">
+					<view class="uni-list-cell-left">
+						当前期望上门日期
+					</view>
+					<view class="uni-list-cell-db">
+						<picker mode="date" :value="date" :start="startDate" :end="endDate" @change="bindDateChange">
+							<view class="uni-input">{{date}}</view>
+						</picker>
+					</view>
+				</view>
+			</view>
+			<upload-images @upload='upload' @returnImgUrl="getImgUrl" :token="upToken"></upload-images>
+			<!-- <ck-upload-img @returnImgUrl="getImgUrl" :initImgList="urls" :selectNum=3 :token="upToken"></ck-upload-img> -->
 		</view>
 		<view class="footer">
-			<button type='primary' class="btn">提交</button>
-			
+			<button type='primary' class="btn" @tap="submit">提交</button>
 		</view>
-		
-		
-		
 		
 	</view>
 </template>
 
 <script>
 	import uploadImages from '@/components/upload-images.vue'
+	import ckUploadImg from '@/components/ck-uploadImg/ck-uploadImg.vue'
 	var sourceType = [
 		['camera'],
 		['album'],
@@ -58,160 +66,211 @@
 	]
 	export default {
 		components: {
-			uploadImages
+			uploadImages,
+			ckUploadImg
 		},
 		data(){
+			const currentDate = this.getDate({
+			            format: true
+			        })
 			return {
+				index: 0,
+				            date: currentDate,
+				            time: '12:01',
+				items: [{
+						value: 'USA',
+						name: '室内'
+					},
+					{
+						value: 'CHN',
+						name: '室外',
+					}
+				],
+				detailPosition: '',
+				current: 0,
 				text: '',
 				imglist: [],
 				imageList: [],
-				sourceTypeIndex: 2,
-				sourceType: ['拍照', '相册', '拍照或相册'],
-				sizeTypeIndex: 2,
-				sizeType: ['压缩', '原图', '压缩或原图'],
-				countIndex: 8,
-				count: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-				
-			}
+				isRotate: false,
+				upToken:'',//上传七牛云通过后台java接口获取token,参考文档https://developer.qiniu.com/kodo/sdk/1239/java
+				urls:[],
+				repairImg: null
+			};
 		},
+		computed: {
+		        startDate() {
+		            return this.getDate('start');
+		        },
+		        endDate() {
+		            return this.getDate('end');
+		        }
+		    },
+			onLoad(){
+				this.getToken();
+				
+			},
 		methods: {
+			getToken(){
+				this.$api.httpRequest({
+					url: '/pro_Servers/token/qiniu',
+					method: 'get'
+				}).then(res => {
+					// console.log(res, 'token')
+					this.upToken = res;
+				})
+			},
+			bindDateChange: function(e) {
+				this.date = e.target.value
+			},
+			bindTimeChange: function(e) {
+				this.time = e.target.value
+			},
+			getDate(type) {
+				const date = new Date();
+				let year = date.getFullYear();
+				let month = date.getMonth() + 1;
+				let day = date.getDate();
+	
+				if (type === 'start') {
+					year = year - 60;
+				} else if (type === 'end') {
+					year = year + 2;
+				}
+				month = month > 9 ? month : '0' + month;;
+				day = day > 9 ? day : '0' + day;
+				return `${year}-${month}-${day}`;
+			},
+			radioChange(evt) {
+				for (let i = 0; i < this.items.length; i++) {
+					if (this.items[i].value === evt.target.value) {
+						this.current = i;
+						break;
+					}
+				}
+			},
 			upload(arr) {
 				this.imglist = arr;
 				
 			},
-			delate(index) {
-				uni.showModal({
-					title: '提示',
-					content: '是否要删除该图片',
-					success: (res)=> {
-						if(res.confirm){
-							this.imageList.splice(index,1)
-						}
-					}
-				})
+			submit(){
+				if(!this.text){
+					uni.showToast({
+						icon: 'none',
+						title: '请输入内容'
+					});
+					return;
+					
+				}
+				if(this.current === 1 && !this.detailPosition){
+					uni.showToast({
+						icon: 'none',
+						title: '请输入具体室外地址'
+					});
+					return;
+				}
+				const currentTime = `${this.date}`
+				
+				let timestamp1 = currentTime.replace(/-/g,'/');
+				let timestamp2 = new Date(timestamp1).getTime();
+				// console.log(currentTime, 'currentTime',timestamp2, '时间戳')
+				// return
+				const data = {
+					repairDes: this.text,
+					position: this.current,
+					expectTime: timestamp2, // 期望上门时间 时间戳
+					repairInfo: this.detailPosition
+				}
+				// console.log(data, currentTime,typeof currentTime, '上传的数据', '99999’')
+				
+				const requestTask1 = uni.request({
+				    url: 'http://47.104.223.203:8080/pro_Servers/repair/',
+				    header: {
+				     'content-type': 'application/x-www-form-urlencoded'
+				    },
+					method: 'POST',
+					
+				    data: {
+				     // repairDes:"新增楼道损坏测试推送",
+				     // position:1,
+				     // repairMoney:30,
+				     // repairDel:0,
+				     // repairInfo:"公共公园8888",
+					 repairDes:this.text,
+					 position: 1,
+					 expectTime:currentTime,
+					 repairMoney:30,
+					 repairDel:0,
+					 repairInfo:"公共公园666",
+					 fixerId:0,
+					 fixDes:'',
+					 repairIdentify:'',
+					 // repairImg1:'',
+					 // repairImg2:'',
+					 // repairImg3:'',
+					 // repairImg4:'',
+					 // repairImg5:'',
+					 
+					 repairStates:0,
+					 fixImg1:'',
+					 fixImg2:'',
+					 fixImg3:'',
+					 fixImg4:'',
+					 fixImg5:'',
+					 update_Tm:1462204800000,
+					 repairStates:0,
+					 ...this.repairImg
+				    },
+				    success: function(res) {
+				     console.log(res.data);
+					 	uni.navigateTo({
+					 		url: '/pages/index/index'
+					 	})
+				    },
+				    fail: function(res) {
+				   
+				    }
+				   });
+				
+				
+				// uni.request({  
+				//     url: 'http://47.104.223.203:8080/pro_Servers/repair/', //测试域名  
+				//     header: {'content-type': 'application/x-www-form-urlencoded'},
+				//     method: 'POST',
+				//     data: data,
+				//     success: function(result) {  
+				//         console.log(result.data, '数据');
+				//     }  
+				// });
+				
+				// this.$api.httpRequest({
+				// 	url: `/pro_Servers/repair/`,
+				// 	method: 'POST',
+				// }, data).then(res => {
+				// 	// console.log(res, 'res')
+				// 	// console.log(this.$store, '仓库')
+				// 	uni.navigateTo({
+				// 		url: '/pages/index/index'
+				// 	})
+					
+				// })
+			},
+			getImgUrl(urls){
+				// console.log(urls, typeof urls, this.$store.state.qiniuUrl, '88888')
+				const qiniuUrl = this.$store.state.qiniuUrl;
+				let obj = {
+					
+				}
+				for(let i in urls){
+					obj['repairImg'+Number(i+1)] = `${qiniuUrl}${urls[i]}`
+				}
+				this.repairImg = Object.assign({}, obj)
+				console.log(obj, 'obj',this.repairImg)
+				
 				
 			},
-			sourceTypeChange: function(e) {
-				this.sourceTypeIndex = parseInt(e.detail.value)
-			},
-			sizeTypeChange: function(e) {
-				this.sizeTypeIndex = parseInt(e.detail.value)
-			},
-			countChange: function(e) {
-				this.countIndex = e.detail.value;
-			},
-			chooseImage: async function() {
-				// #ifdef APP-PLUS
-				// TODO 选择相机或相册时 需要弹出actionsheet，目前无法获得是相机还是相册，在失败回调中处理
-				if (this.sourceTypeIndex !== 2) {
-					let status = await this.checkPermission();
-					if (status !== 1) {
-						return;
-					}
-				}
-				// #endif
-		
-				if (this.imageList.length === 9) {
-					let isContinue = await this.isFullImg();
-					console.log("是否继续?", isContinue);
-					if (!isContinue) {
-						return;
-					}
-				}
-				uni.chooseImage({
-					sourceType: sourceType[this.sourceTypeIndex],
-					sizeType: sizeType[this.sizeTypeIndex],
-					count: this.imageList.length + this.count[this.countIndex] > 9 ? 9 - this.imageList.length : this.count[this.countIndex],
-					success: (res) => {
-						this.imageList = this.imageList.concat(res.tempFilePaths);
-					},
-					fail: (err) => {
-						// #ifdef APP-PLUS
-						if (err['code'] && err.code !== 0 && this.sourceTypeIndex === 2) {
-							this.checkPermission(err.code);
-						}
-						// #endif
-						// #ifdef MP
-						uni.getSetting({
-							success: (res) => {
-								let authStatus = false;
-								switch (this.sourceTypeIndex) {
-									case 0:
-										authStatus = res.authSetting['scope.camera'];
-										break;
-									case 1:
-										authStatus = res.authSetting['scope.album'];
-										break;
-									case 2:
-										authStatus = res.authSetting['scope.album'] && res.authSetting['scope.camera'];
-										break;
-									default:
-										break;
-								}
-								if (!authStatus) {
-									uni.showModal({
-										title: '授权失败',
-										content: 'Hello uni-app需要从您的相机或相册获取图片，请在设置界面打开相关权限',
-										success: (res) => {
-											if (res.confirm) {
-												uni.openSetting()
-											}
-										}
-									})
-								}
-							}
-						})
-						// #endif
-					}
-				})
-			},
-			isFullImg: function() {
-				return new Promise((res) => {
-					uni.showModal({
-						content: "已经有9张图片了,是否清空现有图片？",
-						success: (e) => {
-							if (e.confirm) {
-								this.imageList = [];
-								res(true);
-							} else {
-								res(false)
-							}
-						},
-						fail: () => {
-							res(false)
-						}
-					})
-				})
-			},
-			previewImage: function(e) {
-				var current = e.target.dataset.src
-				uni.previewImage({
-					current: current,
-					urls: this.imageList
-				})
-			},
-			async checkPermission(code) {
-				let type = code ? code - 1 : this.sourceTypeIndex;
-				let status = permision.isIOS ? await permision.requestIOS(sourceType[type][0]) :
-					await permision.requestAndroid(type === 0 ? 'android.permission.CAMERA' :
-						'android.permission.READ_EXTERNAL_STORAGE');
-		
-				if (status === null || status === 1) {
-					status = 1;
-				} else {
-					uni.showModal({
-						content: "没有开启权限",
-						confirmText: "设置",
-						success: function(res) {
-							if (res.confirm) {
-								permision.gotoAppSetting();
-							}
-						}
-					})
-				}
-		
-				return status;
-			}
+			
+			
+			
 		}
 	}
 </script>

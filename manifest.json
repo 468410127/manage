@@ -93,5 +93,34 @@
         "setting" : {
             "urlCheck" : true
         }
+    },
+    "h5" : {
+        "devServer" : {
+            // "https" : false,
+			"port": 9000,
+			 "disableHostCheck": true,
+			 "proxy": {
+				 "/api": {
+					 "target": "http://47.104.223.203:8080",
+					 "changeOrigin": true,
+					 "secure": false // // 设置支持https协议的代理
+				 }
+			 }
+			
+        }
     }
 }
+//  "h5" : {
+//      "devServer" : {
+// "port": 9000,
+//  "disableHostCheck": true,
+//  "proxy": {
+// 	 "/api": {
+// 		 "target": "http://47.104.223.203:8080",
+// 		 "changeOrigin": true,
+// 		 "secure": false // // 设置支持https协议的代理
+// 	 }
+//  }
+//      }
+//  }
+
