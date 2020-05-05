@@ -8,7 +8,7 @@
 			<view class="input-box">
 				<input id="password" password placeholder="请输入密码" class="input code-input" @input="verify"/>
 			</view>
-			<button class="button enter" hover-class="button-hover" :disabled="isDisabled" formType="submit"> 确定 </button>
+			<button class="button enter" type="primary" hover-class="button-hover" :disabled="isDisabled" formType="submit"> 确定 </button>
 		</form>
 	</view>
 </template>

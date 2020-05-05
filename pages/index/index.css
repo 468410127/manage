@@ -17,9 +17,8 @@
 .img {
 	width: 60rpx;
 	height: 60rpx;
-	border: 1px solid red;
 	box-sizing: border-box;
-	
+	background-size: cover;
 }
 .name {
  flex: 1;
@@ -66,5 +65,8 @@
 } */
 uni-button,uni-button:after  {
 	border-radius: 0;
+}
+.uni-swiper-tab {
+	border-bottom: 1px solid #FFF4F4F4 !important;
 }
 

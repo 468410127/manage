@@ -4,11 +4,10 @@
 			<view>
 				<view class="main-fix">
 					<view class="main-header">
-						<view class="img">
-							
-						</view>
+						
+						<image src="../../static/index.png" class="img"></image>
 						<view class="name">
-						复地连城国际花园333333
+						{{location}}
 						</view>
 						<i class="iconfont icon-icon-test3 back"></i>
 					</view>
@@ -34,7 +33,8 @@
 							</scroll-view>
 						</swiper-item>
 					</swiper> -->
-					<index-list :list='list' :index="tabIndex" @goJump="handleJump"></index-list>
+					<index-list v-if='list.length' :list='list' :index="tabIndex" @goJump="handleJump"></index-list>
+					<empty-page v-else></empty-page>
 				</view>
 				<view class="main-footer">
 					<button type="primary" hover-class="btn-hover" @tap="goSubmit">报事保修</button>
@@ -49,10 +49,12 @@
 
 <script>
 	import indexList from '@/components/index-list.vue'
+	import emptyPage from '@/components/empty-page.vue'
 	import { Position,Status } from '@/common/js/enum.js';
 	export default {
 		components: {
-			indexList
+			indexList,
+			emptyPage
 		},
 		data(){
 			return {
@@ -68,18 +70,20 @@
 						id: 1
 					},
 					{
-						name: '处理中',
+						name: '未付款',
 						id: 2
 					},
 					{
-						name: '待付款',
+						name: '已结束',
 						id: 3
 					},{
-						name: '待评价',
+						name: '已评价',
 						id: 4
 					}
 				],
-				list: []
+				list: [],
+				location: '',
+				allDataList: []
 			}
 		},
 		onLoad(){
@@ -91,10 +95,10 @@
 				
 			})
 			this.init();
+			this.getLocation();
 			
 		},
 		mounted(){
-			// this.init();
 			
 		},
 		methods: {
@@ -108,12 +112,38 @@
 						item.adress = Position[item.position].name
 						item.status = Status[item.repairStates].name
 					})
+					data.sort(function(a,b){return a.repairStates>b.repairStates?1:-1});
 					this.list = data;
+					this.allDataList = data;
+					
 				})
 				
 			},
+			// 获取用户地理位置
+			getLocation(){
+				this.$api.httpRequest({
+					url: `/pro_Servers/owner/`,
+					method: 'get'
+				}).then(res => {
+					const data = res.infos || [];
+					
+					const currentUser = data.find(item => {
+						return item.ownerID === this.$store.state.userInfo.id
+					})
+					// console.log(data, 'data用户信息', currentUser)
+				})
+			},
 			tabtap(index) {
 				this.tabIndex = index;
+				if(index > 0){
+					const statusNum = Number(index - 1);
+					this.list = this.allDataList.filter(item => {
+						return item.repairStates === statusNum
+					});
+					console.log(statusNum, '页面tab跳转', this.list)
+				}
+				
+				
 			},
 			goSubmit(){
 				uni.navigateTo({
@@ -124,8 +154,6 @@
 				this.$store.commit("SET_LIST_INFO",  {
 					...value
 				})
-				// SET_LIST_INFO
-				// console.log(value, '88888')
 				uni.navigateTo({
 					url: `/pages/details/index`
 				})

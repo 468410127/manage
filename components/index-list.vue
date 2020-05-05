@@ -79,7 +79,7 @@ import indexList from '@/components/index-list.vue' -->
 				justify-content: space-between;
 				vertical-align: middle;
 				padding: 20rpx 0;
-				border-bottom: 1px solid #969696;
+				border-bottom: 1px solid #FFF4F4F4;
 				.title {
 					line-height: 60rpx;
 					font-size: 14px;
