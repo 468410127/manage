@@ -46,8 +46,17 @@
 				uni.clearStorageSync();
 			},
 			login(){
+				const clientId = uni.getStorageSync(
+			     'clientid',
+				)
+				let url = ''
+				if(clientId){
+					url =`/pro_Servers/users/login/${this.mynote.phone}/${this.mynote.password}/${clientId}`
+				}else{
+					url = `/pro_Servers/users/login/${this.mynote.phone}/${this.mynote.password}`
+				};
 				this.$api.httpRequest({
-					url: `/pro_Servers/users/login/${this.mynote.phone}/${this.mynote.password}`,
+					url,
 					method: 'POST'
 				}).then(res => {
 					if(res.status === "ok"){
@@ -61,12 +70,10 @@
 						
 						this.mynote.phone = '';
 						this.mynote.password = '';
-					
 						uni.showToast({
 							title: "您输入的账号或者密码不正确",
 							icon: 'none'
 						})
-						
 					}
 					
 				})

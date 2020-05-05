@@ -199,7 +199,6 @@
 										expectTime: data.expectTime !== null ?data.expectTime:''
 									})
 								}
-								console.log(this.data, 'tttttt')
 							}
 						})
 						

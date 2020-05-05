@@ -1,9 +1,20 @@
 <script>
 	export default {
 		onLaunch: function () {
-			
-			// var info = plus.push.getClientInfo();
-			// console.log('App Launch', info)
+			//#ifdef APP-PLUS
+			var info = plus.push.getClientInfo();
+			if(info && info.clientid){
+				uni.setStorage({
+					 key: 'clientid',
+					 data: info.clientid
+				});
+			}else {
+				uni.setStorage({
+					 key: 'clientid',
+					 data: ''
+				});
+			}
+			//#endif
 		},
 		onShow: function () {
 			console.log('App Show')

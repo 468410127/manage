@@ -60,7 +60,7 @@
 			}
 		},
 		onLoad(){
-			console.log('加载页面')
+			
 			this.userInfo = JSON.parse(uni.getStorageSync(
 			     'admin',
 			))
@@ -93,7 +93,8 @@
 				let obj = {
 				}
 				for(let i in urls){
-					obj['fixImg'+Number(i+1)] = `${qiniuUrl}${urls[i]}`
+					const num = `${Number(i)+1}`;
+					obj['fixImg'+num] = `${qiniuUrl}${urls[i]}`
 				}
 				this.fixImg = Object.assign({}, obj)
 			},
@@ -129,7 +130,11 @@
 					method: 'POST',
 				    data: {
 						 ...this.currentListInfo,
-						 ...this.fixImg,
+						 fixImg1: this.fixImg.fixImg1?this.fixImg.fixImg1: '',
+						 fixImg2: this.fixImg.fixImg2?this.fixImg.fixImg2: '',
+						 fixImg3: this.fixImg.fixImg3?this.fixImg.fixImg3: '',
+						 fixImg4: this.fixImg.fixImg4?this.fixImg.fixImg4: '',
+						 fixImg5: this.fixImg.fixImg5?this.fixImg.fixImg5: '',
 						 repairStates: 3,
 						 repairMoney: +this.money,
 						 
