@@ -126,10 +126,10 @@
 					method: 'get'
 				}).then(res => {
 					const data = res.infos || [];
-					
 					const currentUser = data.find(item => {
 						return item.ownerID === this.$store.state.userInfo.id
 					})
+					this.location = this.$store.state.listInfo.houserDes;
 					// console.log(data, 'data用户信息', currentUser)
 				})
 			},
@@ -140,10 +140,7 @@
 					this.list = this.allDataList.filter(item => {
 						return item.repairStates === statusNum
 					});
-					console.log(statusNum, '页面tab跳转', this.list)
 				}
-				
-				
 			},
 			goSubmit(){
 				uni.navigateTo({

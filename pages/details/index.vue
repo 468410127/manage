@@ -29,12 +29,11 @@
 							<view class="left">
 								{{item.value}}
 							</view>
-							<view class="right">
+							<view class="right" v-if='data'>
 								{{data[item.key]}}
 							</view>
 						</view>
 					</block>	
-					
 				</view>
 			</view>
 			<view class="details-footer" v-if='!isFinish'>
@@ -58,10 +57,10 @@
 <script>
 	import indexList from '@/components/index-list.vue'
 	import { Position,Status } from '@/common/js/enum.js';
-	const Map = {
-		key: ['expectTime', 'user', 'telephone', 'repairInfo', 'repariID', 'repairDes'],
-		value: ['期待上门时间', '提交人', '联系电话', '报修地址', '工单编号', '报修内容']
-	}
+	// const Map = {
+	// 	key: ['expectTime', 'user', 'telephone', 'repairInfo', 'repariID', 'repairDes'],
+	// 	value: ['期待上门时间', '提交人', '联系电话', '报修地址', '工单编号', '报修内容']
+	// }
 	export default {
 		components: {
 			indexList
@@ -86,7 +85,7 @@
 				config: [
 					{
 						value: '期待上门时间',
-						key: 'expectTime'
+						key: 'telephone'
 					},
 					{
 						value: '提交人',
