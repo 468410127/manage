@@ -14,6 +14,8 @@
 				</view>
 			</view>
 		</view>
+		
+		<!-- <upload-images @upload='upload'></upload-images> -->
 	</view>
 </template>
 

@@ -46,7 +46,9 @@
 					method: 'POST'
 				}).then(res => {
 					if(res.status === "ok"){
-						this.$store.commit("userName", ...res.t)
+						this.$store.commit("SET_USER",  {
+							...res.t
+						})
 					}
 					uni.navigateTo({
 						url: '/pages/index/index'

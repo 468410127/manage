@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import  {setUserInfo, getUserInfo } from '../common/js/auth.js'
+import  {setUserInfo, getUserInfo, setListInfo, getListInfo } from '../common/js/auth.js'
 
 Vue.use(Vuex)
 
@@ -9,7 +9,8 @@ const store = new Vuex.Store({
 		hasLogin: false,
 		userHeadimg: "/static/logo.png",
 		userInfo: getUserInfo(),
-		gender: "男",
+		listInfo: getListInfo(),
+		
 		addressList: [],
 		cartList: [],
 		total: 0,
@@ -21,6 +22,10 @@ const store = new Vuex.Store({
 			 state.userInfo = data;
 			 setUserInfo(data);
 			
+		},
+		SET_LIST_INFO:(state, data) => {
+			 state.listInfo = data;
+			 setListInfo(data);
 		},
 		login(state) {
 			state.hasLogin = true;

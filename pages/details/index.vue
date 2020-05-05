@@ -24,21 +24,22 @@
 					</view>
 				</view>
 				<view class="content">
-					<block v-for="(item,index) in details.dataList" :key="index">
+					<block v-for="(item,index) in config" :key="index">
 						<view class="panel">
 							<view class="left">
-								{{item.key}}
-							</view>
-							<view class="right">
 								{{item.value}}
 							</view>
+							<view class="right">
+								{{data[item.key]}}
+							</view>
 						</view>
-					</block>
+					</block>	
+					
 				</view>
 			</view>
-			<view class="details-footer">
-				<!-- <button type="primary" hover-class="btn-hover" @tap="goSubmit">报时保修</button> -->
-				<view class="utils">
+			<view class="details-footer" v-if='!isFinish'>
+				<button type="primary" v-if='isStatus' hover-class="btn-hover" @tap="goSubmit">接单</button>
+				<view class="utils" v-else>
 					<block v-for="(item, index) in tabList" :key="index">
 						<view class="list" @tap="goJump(item.path)">
 							<i class="iconfont icon-icon-test3">
@@ -60,7 +61,6 @@
 	const Map = {
 		key: ['expectTime', 'user', 'telephone', 'repairInfo', 'repariID', 'repairDes'],
 		value: ['期待上门时间', '提交人', '联系电话', '报修地址', '工单编号', '报修内容']
-		
 	}
 	export default {
 		components: {
@@ -68,6 +68,8 @@
 		},
 		data(){
 			return {
+				isFinish: false,
+				isStatus: false,
 				swiperHeight: null,
 				tabIndex: 0,
 				tabBars: [
@@ -81,44 +83,39 @@
 					},
 					
 				],
-				details: {
-					dataList: [
-						{
-							key: '期待上门时间',
-							value: ''
-						},
-						{
-							key: '提交人',
-							value: 'LLT'
-						},
-						{
-							key: '联系电话',
-							value: '15732625925'
-						},
-						{
-							key: '报修地址',
-							value: '杭州市乔司街道石通东路复地连城国际3幢2单元798'
-						},
-						{
-							key: '工单编号',
-							value: '15666673444444444'
-						},
-						{
-							key: '报修内容',
-							value: '卧室等坏掉了，请快点来修理，是小灯泡,请快点来修理，'
-						}
-					]
-				},
+				config: [
+					{
+						value: '期待上门时间',
+						key: 'expectTime'
+					},
+					{
+						value: '提交人',
+						key: 'user'
+					},
+					{
+						value: '联系电话',
+						key: 'telephone'
+					},
+					{
+						value: '报修地址',
+						key: 'repairInfo'
+					},
+					{
+						value: '工单编号',
+						key: 'repariID'
+					},
+					{
+						value: '报修内容',
+						key: 'repairDes'
+					}
+					
+				],
+				
 				tabList: [
 					{
 						icon: '',
-						name: '分配工单',
-						path: 'finish'
-					},
-					{
-						icon: '',
 						name: '标记完成',
-						path: 'finish'
+						path: 'mark'
 					},
 					{
 						icon: '',
@@ -128,19 +125,19 @@
 					{
 						icon: '',
 						name: '关闭工单',
-						path: 'finish'
+						path: 'close'
 					}
 				],
 				data: null,
 				address: '',
-				status: ''
+				status: '',
 				
 			}
 		},
 		onLoad(options){
 			// option
 			// console.log(options, 'options');
-			this.init(options.repariID);
+			this.init(this.$store.state.listInfo.repariID);
 			uni.getSystemInfo({
 				success: (res) => {
 					let height = res.windowHeight - uni.upx2px(100);
@@ -159,16 +156,14 @@
 					// console.log(res, 'detail')
 					if(res.status === 'ok'){
 						const data = res.t || {};
-						// this.data = {
-						// 	...data,
-						// };
-						// console.log(Position, data.position, data.repairStates, '999999')
 						this.address = Position[data.position].name;
 						this.status = Status[data.repairStates].name;
-						// this.
-						console.log(this.$store.state.userName, this.data, 'data')
-						
-						
+						this.isStatus = data.repairStates === 0 ? true: false
+						this.data = Object.assign(data, {
+							user: this.$store.state.userInfo.nickName,
+							telephone: this.$store.state.userInfo.phone,
+						})
+						console.log(this.$store.state.userInfo, this.data, 'data')
 					}
 				})
 				
@@ -178,14 +173,47 @@
 				
 			},
 			goSubmit(){
-				uni.navigateTo({
-					url: '/pages/submit/index'
-				})
+				// 接单
+				this.ststus(1);
+			},
+			ststus(num){
+				uni.request({
+				    url: 'http://47.104.223.203:8080/pro_Servers/repair/update',
+				    header: {
+				     'content-type': 'application/x-www-form-urlencoded'
+				    },
+					method: 'POST',
+				    data: {
+						 ...this.data,
+						 repairStates: num
+				    },
+				    success: function(res) {
+						console.log(res.data, '参数', num);
+						if(num === 1){
+							this.isStatus = false;
+							console.log(this.isStatus, '状态的改变')
+						}else if(num === 3){
+							this.init(this.$store.state.listInfo.repariID);
+							this.isFinish = true;
+							// console.log(this.isFinish,this.data, '结束了')
+						}
+				    },
+				    
+				});
+				
 			},
 			goJump(value){
-				uni.navigateTo({
-					url: `/pages/${value}/index`
-				})
+				if(value === 'mark') {
+					this.ststus(3);
+				}else if(value === 'finish') {
+					uni.navigateTo({
+						url: `/pages/${value}/index`
+					})
+					
+				}else if(value === 'close') {
+					
+				}
+				
 			}
 		}
 	}

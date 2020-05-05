@@ -109,7 +109,6 @@
 						item.status = Status[item.repairStates].name
 					})
 					this.list = data;
-					console.log(data, 'data')
 				})
 				
 			},
@@ -122,9 +121,13 @@
 				})
 			},
 			handleJump(value){
+				this.$store.commit("SET_LIST_INFO",  {
+					...value
+				})
+				// SET_LIST_INFO
 				// console.log(value, '88888')
 				uni.navigateTo({
-					url: `/pages/details/index?repariID=${value.repariID}`
+					url: `/pages/details/index`
 				})
 			}
 		}
