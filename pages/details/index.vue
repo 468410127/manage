@@ -14,43 +14,52 @@
 					</scroll-view>
 				</view>
 			</view>
-			<view class="details-list">
-				<view class="header">
-					<view class="title">
-						{{address}}
-					</view>
-					<view class="status">
-						{{status}}
-					</view>
-				</view>
-				<view class="content">
-					<block v-for="(item,index) in config" :key="index">
-						<view class="panel">
-							<view class="left">
-								{{item.value}}
-							</view>
-							<view class="right" v-if='data'>
-								{{data[item.key]}}
-							</view>
+			<view class="main" v-if='tabIndex === 0'>
+				<view class="details-list">
+					<view class="header">
+						<view class="title">
+							{{address}}
 						</view>
-					</block>	
-				</view>
-			</view>
-			<view class="details-footer" v-if='!isFinish'>
-				<button type="primary" v-if='isStatus' hover-class="btn-hover" @tap="goSubmit">接单</button>
-				<view class="utils" v-else>
-					<block v-for="(item, index) in tabList" :key="index">
-						<view class="list" @tap="goJump(item.path)">
-							<!-- <i class="iconfont icon-icon-test3">
-							</i> -->
-							<image :src="item.img" class="img"></image>
-							<view class="tab-name">
-								{{item.name}}
-							</view>
+						<view class="status">
+							{{status}}
 						</view>
-					</block>
+					</view>
+					<view class="content">
+						<block v-for="(item,index) in config" :key="index">
+							<view class="panel">
+								<view class="left">
+									{{item.value}}
+								</view>
+								<view class="right" v-if='data'>
+									{{data[item.key]}}
+								</view>
+							</view>
+						</block>	
+					</view>
 				</view>
+				<view class="details-footer" v-if='!isFinish'>
+					<button type="primary" v-if='isStatus' hover-class="btn-hover" @tap="goSubmit">接单</button>
+					<view class="utils" v-else>
+						<block v-for="(item, index) in tabList" :key="index">
+							<view class="list" @tap="goJump(item.path)">
+								<!-- <i class="iconfont icon-icon-test3">
+								</i> -->
+								<image :src="item.img" class="img"></image>
+								<view class="tab-name">
+									{{item.name}}
+								</view>
+							</view>
+						</block>
+					</view>
+				</view>
+				
 			</view>
+			<view class="main" v-else>
+				<block v-for="(item,index) in imgArr" :key='index'>
+					<image :src="item" class="image"></image>
+				</block>
+			</view>
+			
 		</view>
 	</view>
 </template>
@@ -75,7 +84,7 @@
 						id: 0
 					},
 					{
-						name: '日志',
+						name: '图片',
 						id: 1
 					},
 					
@@ -133,12 +142,13 @@
 				telephone: '',
 				
 				currentId: null, // 当前订单id
-				currentListInfo: null // 当前订单消息
+				currentListInfo: null, // 当前订单消息
+				imgArr: []
 				
 			}
 		},
 		onLoad(options){
-			console.log('加载页面')
+			// console.log('加载页面')
 			this.userInfo = JSON.parse(uni.getStorageSync(
 			     'admin',
 			))
@@ -171,9 +181,24 @@
 						}else{
 							this.isFinish = data.repairStates === 3 || data.repairStates === 4? true: false;
 						}
+						console.log(data, '3333')
+						// 获取当前下单人的信息
+						
+						this.$api.httpRequest({
+							url: `/pro_Servers/owner/ownerID/${data.ownerID}`,
+							method: 'get'
+						}).then(res => {
+							if(res.status === 'ok'){
+								const data = res.t || {};
+								if(data){
+									this.nickName = data.ownerName;
+									this.telephone = data.ownerTel
+								}
+							}
+						})
 						this.data = Object.assign(data, {
-							user: this.userInfo.nickName,
-							telephone: this.userInfo.phone,
+							user: this.nickName,
+							telephone: this.telephone,
 							expectTime: data.expectTime !== null ?data.expectTime:''
 						})
 					
@@ -183,6 +208,16 @@
 			},
 			tabtap(index) {
 				this.tabIndex = index;
+				if(index === 1){
+					let arr = [];
+					for(let key in this.currentListInfo){
+						if(typeof this.currentListInfo[key] === 'string' && this.currentListInfo[key] &&  this.currentListInfo[key].includes('http') ){
+							arr.push(this.currentListInfo[key])
+						}
+					}
+					this.imgArr = arr;
+				}
+				
 				
 			},
 			goSubmit(){
@@ -190,9 +225,7 @@
 				this.ststus(1);
 			},
 			ststus(num){
-				// console.log(this.data.repariID , '77777');
 				const repariID = this.data.repariID;
-				// return 
 				uni.request({
 				    url: 'http://47.104.223.203:8080/pro_Servers/repair/update',
 				    header: {
@@ -211,7 +244,6 @@
 								title: "接单成功",
 								icon: 'success'
 							})
-							
 						}else if(num === 3){
 							
 							this.init(repariID);
@@ -221,25 +253,17 @@
 								icon: 'success'
 							})
 						}
-						
-						
 				    },
-				    
 				});
 				
 			},
 			goJump(value){
-				
 				if(value === 'mark') {
-					console.log("添加记录")
-					uni.navigateTo({
-						url: `/pages/${value}/index`
-					}) // 添加标记
+					this.ststus(3); // 标记完成
 				}else if(value === 'finish') {
 					uni.navigateTo({
 						url: `/pages/${value}/index`
 					})
-					
 				}else if(value === 'close') {
 					this.ststus(3); // 已结束
 				}

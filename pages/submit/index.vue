@@ -53,21 +53,9 @@
 
 <script>
 	import uploadImages from '@/components/upload-images.vue'
-	import ckUploadImg from '@/components/ck-uploadImg/ck-uploadImg.vue'
-	var sourceType = [
-		['camera'],
-		['album'],
-		['camera', 'album']
-	]
-	var sizeType = [
-		['compressed'],
-		['original'],
-		['compressed', 'original']
-	]
 	export default {
 		components: {
-			uploadImages,
-			ckUploadImg
+			uploadImages
 		},
 		data(){
 			const currentDate = this.getDate({
@@ -92,7 +80,7 @@
 				imglist: [],
 				imageList: [],
 				isRotate: false,
-				upToken:'',//上传七牛云通过后台java接口获取token,参考文档https://developer.qiniu.com/kodo/sdk/1239/java
+				upToken:'',
 				urls:[],
 				repairImg: null
 			};
@@ -153,6 +141,7 @@
 				
 			},
 			submit(){
+				
 				if(!this.text){
 					uni.showToast({
 						icon: 'none',
@@ -169,7 +158,6 @@
 					return;
 				}
 				const currentTime = `${this.date}`
-				
 				let timestamp1 = currentTime.replace(/-/g,'/');
 				let timestamp2 = new Date(timestamp1).getTime();
 				// console.log(currentTime, 'currentTime',timestamp2, '时间戳')
@@ -188,37 +176,18 @@
 				     'content-type': 'application/x-www-form-urlencoded'
 				    },
 					method: 'POST',
-					
 				    data: {
-				     // repairDes:"新增楼道损坏测试推送",
-				     // position:1,
-				     // repairMoney:30,
-				     // repairDel:0,
-				     // repairInfo:"公共公园8888",
 					 repairDes:this.text,
-					 position: 1,
+					 position: this.current,
 					 expectTime:currentTime,
-					 repairMoney:30,
-					 repairDel:0,
-					 repairInfo:"公共公园666",
-					 fixerId:0,
-					 fixDes:'',
-					 repairIdentify:'',
-					 // repairImg1:'',
-					 // repairImg2:'',
-					 // repairImg3:'',
-					 // repairImg4:'',
-					 // repairImg5:'',
-					 
+					 repairInfo:this.detailPosition,
 					 repairStates:0,
-					 fixImg1:'',
-					 fixImg2:'',
-					 fixImg3:'',
-					 fixImg4:'',
-					 fixImg5:'',
-					 update_Tm:1462204800000,
-					 repairStates:0,
-					 ...this.repairImg
+					 repairImg1: this.repairImg.repairImg1?this.repairImg.repairImg1: '',
+					 repairImg2: this.repairImg.repairImg2?this.repairImg.repairImg2: '',
+					 repairImg3: this.repairImg.repairImg3?this.repairImg.repairImg3: '',
+					 repairImg4: this.repairImg.repairImg4?this.repairImg.repairImg4: '',
+					repairImg5: this.repairImg.repairImg5?this.repairImg.repairImg5: '',
+					
 				    },
 				    success: function(res) {
 				     console.log(res.data);
@@ -255,18 +224,24 @@
 				// })
 			},
 			getImgUrl(urls){
-				// console.log(urls, typeof urls, this.$store.state.qiniuUrl, '88888')
 				const qiniuUrl = this.$store.state.qiniuUrl;
 				let obj = {
-					
 				}
 				for(let i in urls){
-					obj['repairImg'+Number(i+1)] = `${qiniuUrl}${urls[i]}`
+					const num = `${Number(i)+1}`;
+					obj['repairImg'+num] = `${qiniuUrl}${urls[i]}`
 				}
 				this.repairImg = Object.assign({}, obj)
-				console.log(obj, 'obj',this.repairImg)
-				
-				
+				// let arr = []
+				// for(let key in obj){
+				// 	console.log(obj, key, '8888')
+				// 	arr.push({
+				// 		key: obj[key]
+				// 	})
+					
+				// }
+				// this.repairImg = Object.keys(obj)
+				// console.log(arr, '99999')
 			},
 			
 			

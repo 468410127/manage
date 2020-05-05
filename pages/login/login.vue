@@ -41,18 +41,9 @@
 					url: url
 				})
 			},
-			// 登出，清除所有数据
+			// 清除所有数据
 			loginout(){
-				// this.$api.httpRequest({
-				// 	url: '/pro_Servers/users/loginOut/',
-				// 	method: 'POST'
-				// }).then(res => {
-				// 	console.log()
-				// 	// 清除所有本地数据
-				// 	uni.clearStorageSync();
-				// })
 				uni.clearStorageSync();
-				
 			},
 			login(){
 				this.$api.httpRequest({

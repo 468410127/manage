@@ -4,12 +4,12 @@
 			<view>
 				<view class="main-fix">
 					<view class="main-header">
-						
-						<image src="../../static/index.png" class="img"></image>
+						<!-- <image src="../../static/index.png" class="img"></image> -->
+						<i class="iconfont  icon-dingwei"></i>
 						<view class="name">
 						{{location}}
 						</view>
-						<i class="iconfont icon-icon-test3 back"></i>
+						<i class="iconfont icon-loginout" @tap='loginout'></i>
 					</view>
 					<view class="uni-tab-bar">
 						<scroll-view scroll-y="true" class="uni-swiper-tab">
@@ -113,18 +113,16 @@
 				this.userInfo = JSON.parse(uni.getStorageSync(
 				     'admin',
 				))
-				// 业主
+				
 				if(this.userInfo.userRole === 2){
-					this.isUser = false;
+					this.isUser = false; // // 修理工
 					
 				}else if(this.userInfo.userRole === 1) {
 					
-					this.isUser = true;
+					this.isUser = true;  // 业主
 				}
-				// this.location =this.userInfo.houserDes;
-				this.location =this.userInfo.nickName;
-				// 修理工
-				
+				this.location =this.userInfo.houserDes;
+				// this.location =this.userInfo.nickName;
 				this.$api.httpRequest({
 					url: `/pro_Servers/repair/`,
 					method: 'get'
@@ -155,9 +153,29 @@
 					
 				})
 			},
+			// 登出
+			loginout(){
+				console.log('登出')
+				this.$api.httpRequest({
+					url: '/pro_Servers/users/loginOut/',
+					method: 'POST'
+				}).then(res => {
+					console.log()
+					// 清除所有本地数据
+					uni.clearStorageSync();
+					uni.navigateTo({
+						url: '/pages/login/login'
+					})
+				}).catch(err => {
+					uni.clearStorageSync();
+					uni.navigateTo({
+						url: '/pages/login/login'
+					})
+				})
+				
+			},
 			tabtap(index) {
 				this.tabIndex = index;
-				
 				if(index == 0){
 					this.list = this.allDataList;
 					

@@ -94,3 +94,18 @@ uni-button {
 	backgrund-size: cover;
 	padding-top: 10rpx;
 }
+.main {
+	padding: 20rpx;
+	
+}
+.image {
+	width: 45%;
+	height: 260rpx;
+	background-size: 100%;
+	margin-right: 5%;
+	margin-bottom: 40rpx;
+	
+}
+.image:nth-child(2n+0){
+	margin-right: 0;
+}
