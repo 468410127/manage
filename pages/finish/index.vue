@@ -15,7 +15,7 @@
 						金额
 					</view>
 					<view class="content">
-						 <input class="uni-input" @change='handleMoney' v-model="money" type="number" placeholder="这是一个数字输入框" />
+						 <input class="uni-input" @input='handleMoney' v-model="money" type="number" placeholder="请输入金额" />
 					</view>
 				</view>
 			</block>
@@ -23,9 +23,8 @@
 		</view>
 		<view class="textarea">
 			<view class="uni-textarea">
-				<textarea v-model='status' placeholder="请简单描述一下保修的内容,以便我们更好的处理..." />
+				<textarea v-model='status' placeholder="请简单描述一下报修的内容,以便我们更好的处理..." />
 			</view>
-			<!-- <upload-images @upload='upload'></upload-images> -->
 			<upload-images @upload='upload' @returnImgUrl="getImgUrl" :token="upToken"></upload-images>
 		</view>
 		<view class="footer">
@@ -80,18 +79,14 @@
 					url: '/pro_Servers/token/qiniu',
 					method: 'get'
 				}).then(res => {
-					// console.log(res, 'token')
 					this.upToken = res;
 				})
 			},
 			init(){
-				console.log(this.userInfo, '金额')
 				// this.money = +this.userInfo.repairMoney;
 				this.name = this.userInfo.name;
 				// this.user = this.$store.state.userInfo;
 				this.status = Status[this.currentListInfo.repairStates].name
-				
-				
 			},
 			getImgUrl(urls){
 				const qiniuUrl = this.$store.state.qiniuUrl;
@@ -101,11 +96,19 @@
 					obj['fixImg'+Number(i+1)] = `${qiniuUrl}${urls[i]}`
 				}
 				this.fixImg = Object.assign({}, obj)
-				console.log(obj, 'obj',this.fixImg)
 			},
-			handleMoney(value){
-				// console.log(value, 'vavvv')
-				// this.money = this.money.toFixed(2);
+			handleMoney(e){
+				if (e.target.value.indexOf(".") < 0 && e.target.value != "") {
+				} else if (e.target.value.indexOf(".") == 0) {
+					e.target.value = e.target.value.replace(/[^$#$]/g, "0.");
+					e.target.value = e.target.value.replace(/\.{2,}/g, ".");
+				}else if(!(/^(\d?)+(\.\d{0,2})?$/.test(e.target.value))){
+					e.target.value = e.target.value.substring(0, e.target.value.length - 1)
+				}
+				this.$nextTick(function(){
+					this.money = e.target.value
+				})
+					
 				
 			},
 			// 点击确定

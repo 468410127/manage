@@ -25,9 +25,12 @@
 		justify-content: center;
 		align-items: center;
 		width: 100%;
-		height: 100%;
+		height: calc(100vh - 200rpx);
+		box-sizing: border-box;
 		.main {
-			margin: 300rpx auto;
+			margin: 0 auto;
+			font-size: 14px;
+			font-weight: bold;
 			
 		}
 	}

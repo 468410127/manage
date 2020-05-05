@@ -1,6 +1,6 @@
 {
-    "name" : "shop",
-    "appid" : "__UNI__D3EE1B5",
+    "name" : "纳特智能",
+    "appid" : "__UNI__754AE08",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -40,7 +40,9 @@
             },
             "ios" : {},
             /* ios打包配置 */
-            "sdkConfigs" : {},
+            "sdkConfigs" : {
+                "ad" : {}
+            },
             "icons" : {
                 "ios" : {
                     "appstore" : "static/logo.png",
@@ -97,30 +99,18 @@
     "h5" : {
         "devServer" : {
             // "https" : false,
-			"port": 9000,
-			 "disableHostCheck": true,
-			 "proxy": {
-				 "/api": {
-					 "target": "http://47.104.223.203:8080",
-					 "changeOrigin": true,
-					 "secure": false // // 设置支持https协议的代理
-				 }
-			 }
-			
-        }
+            "port" : 9000,
+            "disableHostCheck" : true,
+            "proxy" : {
+                "/api" : {
+                    "target" : "http://47.104.223.203:8080",
+                    "changeOrigin" : true,
+                    "secure" : false // // 设置支持https协议的代理
+                }
+            }
+        },
+        "title" : "报修"
     }
 }
-//  "h5" : {
-//      "devServer" : {
-// "port": 9000,
-//  "disableHostCheck": true,
-//  "proxy": {
-// 	 "/api": {
-// 		 "target": "http://47.104.223.203:8080",
-// 		 "changeOrigin": true,
-// 		 "secure": false // // 设置支持https协议的代理
-// 	 }
-//  }
-//      }
-//  }
+
 

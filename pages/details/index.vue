@@ -165,7 +165,12 @@
 						this.address = Position[data.position].name;
 						this.status = Status[data.repairStates].name;
 						this.isStatus = data.repairStates === 0 ? true: false;
-						this.isFinish = data.repairStates === 3 || data.repairStates === 4? true: false;
+						console.log(this.userInfo.userRole === 2, '3333')
+						if(this.userInfo.userRole === 1){
+							this.isFinish = true;
+						}else{
+							this.isFinish = data.repairStates === 3 || data.repairStates === 4? true: false;
+						}
 						this.data = Object.assign(data, {
 							user: this.userInfo.nickName,
 							telephone: this.userInfo.phone,
@@ -202,17 +207,21 @@
 						if(num === 1){
 							this.init(repariID);
 							this.isStatus = false;
-							console.log(this.isStatus, '状态的改变')
+							uni.showToast({
+								title: "接单成功",
+								icon: 'success'
+							})
+							
 						}else if(num === 3){
-							console.log(this.currentListInfo, this.data, 'this.currentListInfo')
+							
 							this.init(repariID);
 							this.isFinish = true;
-							// console.log(this.isFinish,this.data, '结束了')
+							uni.showToast({
+								title: "处理成功",
+								icon: 'success'
+							})
 						}
-						uni.showToast({
-							title: "处理成功",
-							icon: 'success'
-						})
+						
 						
 				    },
 				    

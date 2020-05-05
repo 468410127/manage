@@ -28,6 +28,7 @@
 		},
 		onLoad() {
 			this.height = uni.getSystemInfoSync().screenHeight-67 +"px";
+			this.loginout();
 		},
 		// mounted(){
 		// 	this.login();
@@ -40,6 +41,19 @@
 					url: url
 				})
 			},
+			// 登出，清除所有数据
+			loginout(){
+				// this.$api.httpRequest({
+				// 	url: '/pro_Servers/users/loginOut/',
+				// 	method: 'POST'
+				// }).then(res => {
+				// 	console.log()
+				// 	// 清除所有本地数据
+				// 	uni.clearStorageSync();
+				// })
+				uni.clearStorageSync();
+				
+			},
 			login(){
 				this.$api.httpRequest({
 					url: `/pro_Servers/users/login/${this.mynote.phone}/${this.mynote.password}`,
@@ -49,54 +63,26 @@
 						this.$store.commit("SET_USER",  {
 							...res.t
 						})
-						uni.setStorage({
-						    key: 'nickName',
-						    data: res.t.nickName,
-						});
-						uni.setStorage({
-						    key: 'phone',
-						    data: res.t.phone,
-						});
-						uni.setStorage({
-						    key: 'userRole',
-						    data: res.t.userRole,
-						});
-						uni.setStorage({
-						    key: 'houserDes',
-						    data: res.t.houserDes,
-						});
+						uni.navigateTo({
+							url: '/pages/index/index'
+						})
+					}else{
 						
-						// uni.setStorage({
-						//     key: 'repariID',
-						//     data: value.repariID,
-						// });
+						this.mynote.phone = '';
+						this.mynote.password = '';
+					
+						uni.showToast({
+							title: "您输入的账号或者密码不正确",
+							icon: 'none'
+						})
+						
 					}
-					uni.navigateTo({
-						url: '/pages/index/index'
-					})
+					
 				})
 			},
-			login1() {
-				// this.login()
-				uni.switchTab({
-					url: '../mine/index'
-				});
-			},
+			
 			formSubmit(e) {
 				this.login();
-				// if(this.mynote.phone == "wang" && this.mynote.password == 1){
-				// 	this.login();
-				// 	this.changeUserName(this.mynote.phone);
-				// 	uni.setStorageSync('info',{userName: this.mynote.phone,password: this.mynote.password});
-				// 	uni.switchTab({
-				// 		url: '../index/index'
-				// 	});
-				// }else{
-				// 	uni.showToast({
-				// 		title: "您输入的账号或者密码不正确",
-				// 		icon: 'none'
-				// 	})
-				// }
 			},
 			verify(e) {
 				var id = e.currentTarget.id;
