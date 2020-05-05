@@ -189,18 +189,20 @@
 							method: 'get'
 						}).then(res => {
 							if(res.status === 'ok'){
-								const data = res.t || {};
-								if(data){
-									this.nickName = data.ownerName;
-									this.telephone = data.ownerTel
+								const data2 = res.t || {};
+								if(data2){
+									this.nickName = data2.ownerName;
+									this.telephone = data2.ownerTel;
+									this.data = Object.assign(data, {
+										user: this.nickName,
+										telephone: this.telephone,
+										expectTime: data.expectTime !== null ?data.expectTime:''
+									})
 								}
+								console.log(this.data, 'tttttt')
 							}
 						})
-						this.data = Object.assign(data, {
-							user: this.nickName,
-							telephone: this.telephone,
-							expectTime: data.expectTime !== null ?data.expectTime:''
-						})
+						
 					
 					}
 				})
