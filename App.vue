@@ -1,8 +1,9 @@
 <script>
 	export default {
 		onLaunch: function () {
-			console.log('App Launch')
-			// var info = 
+			
+			// var info = plus.push.getClientInfo();
+			// console.log('App Launch', info)
 		},
 		onShow: function () {
 			console.log('App Show')

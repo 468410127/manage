@@ -37,7 +37,8 @@
 					<empty-page v-else></empty-page>
 				</view>
 				<view class="main-footer">
-					<button type="primary" hover-class="btn-hover" @tap="goSubmit">报事保修</button>
+					<button  v-if='isUser' tisUserype="primary" hover-class="btn-hover" @tap="goSubmit">报事报修</button>
+					<!-- <button type="primary" hover-class="btn-hover" @tap="goSubmit">接单</button> -->
 					<!-- <button type='primary'>我的提交</button> -->
 				</view>
 			</view>
@@ -70,20 +71,26 @@
 						id: 1
 					},
 					{
-						name: '未付款',
+						name: '处理中',
 						id: 2
 					},
 					{
-						name: '已结束',
+						name: '未付款',
 						id: 3
+					},
+					{
+						name: '已结束',
+						id: 4
 					},{
 						name: '已评价',
-						id: 4
+						id: 5
 					}
 				],
 				list: [],
 				location: '',
-				allDataList: []
+				allDataList: [],
+				isUser: false,
+				userInfo: null
 			}
 		},
 		onLoad(){
@@ -96,13 +103,27 @@
 			})
 			this.init();
 			this.getLocation();
-			
 		},
 		mounted(){
 			
 		},
 		methods: {
 			init(){
+				this.userInfo = JSON.parse(uni.getStorageSync(
+				     'admin',
+				))
+				// 业主
+				if(this.userInfo.userRole === 2){
+					this.isUser = false;
+					
+				}else if(this.userInfo.userRole === 1) {
+					
+					this.isUser = true;
+				}
+				// this.location =this.userInfo.houserDes;
+				this.location =this.userInfo.nickName;
+				// 修理工
+				
 				this.$api.httpRequest({
 					url: `/pro_Servers/repair/`,
 					method: 'get'
@@ -126,21 +147,26 @@
 					method: 'get'
 				}).then(res => {
 					const data = res.infos || [];
-					const currentUser = data.find(item => {
-						return item.ownerID === this.$store.state.userInfo.id
-					})
-					this.location = this.$store.state.listInfo.houserDes;
-					// console.log(data, 'data用户信息', currentUser)
+					// const currentUser = data.find(item => {
+					// 	return item.ownerID === this.$store.state.userInfo.id
+					// })
+					
 				})
 			},
 			tabtap(index) {
 				this.tabIndex = index;
-				if(index > 0){
-					const statusNum = Number(index - 1);
-					this.list = this.allDataList.filter(item => {
-						return item.repairStates === statusNum
-					});
+				
+				if(index == 0){
+					this.list = this.allDataList;
+					
+				}else{
+					this.getList(Number(index - 1))
 				}
+			},
+			getList(index){
+				this.list = this.allDataList.filter(item => {
+					return item.repairStates === index
+				});
 			},
 			goSubmit(){
 				uni.navigateTo({
@@ -151,6 +177,11 @@
 				this.$store.commit("SET_LIST_INFO",  {
 					...value
 				})
+				console.log(value, '999')
+				uni.setStorage({
+				    key: 'repariID',
+				    data: value.repariID,
+				});
 				uni.navigateTo({
 					url: `/pages/details/index`
 				})

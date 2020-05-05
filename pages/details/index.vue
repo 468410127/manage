@@ -41,8 +41,9 @@
 				<view class="utils" v-else>
 					<block v-for="(item, index) in tabList" :key="index">
 						<view class="list" @tap="goJump(item.path)">
-							<i class="iconfont icon-icon-test3">
-							</i>
+							<!-- <i class="iconfont icon-icon-test3">
+							</i> -->
+							<image :src="item.img" class="img"></image>
 							<view class="tab-name">
 								{{item.name}}
 							</view>
@@ -57,10 +58,7 @@
 <script>
 	import indexList from '@/components/index-list.vue'
 	import { Position,Status } from '@/common/js/enum.js';
-	// const Map = {
-	// 	key: ['expectTime', 'user', 'telephone', 'repairInfo', 'repariID', 'repairDes'],
-	// 	value: ['期待上门时间', '提交人', '联系电话', '报修地址', '工单编号', '报修内容']
-	// }
+	
 	export default {
 		components: {
 			indexList
@@ -85,7 +83,7 @@
 				config: [
 					{
 						value: '期待上门时间',
-						key: 'telephone'
+						key: 'expectTime'
 					},
 					{
 						value: '提交人',
@@ -112,17 +110,17 @@
 				
 				tabList: [
 					{
-						icon: '',
+						img: require("../../static/footer.png"),
 						name: '标记完成',
 						path: 'mark'
 					},
 					{
-						icon: '',
+						img: require("../../static/footer2.png"),
 						name: '添加记录',
 						path: 'finish'
 					},
 					{
-						icon: '',
+						img: require("../../static/footer3.png"),
 						name: '关闭工单',
 						path: 'close'
 					}
@@ -130,21 +128,31 @@
 				data: null,
 				address: '',
 				status: '',
+				userInfo: null,
+				nickName: '',
+				telephone: '',
+				
+				currentId: null, // 当前订单id
+				currentListInfo: null // 当前订单消息
 				
 			}
 		},
 		onLoad(options){
-			// option
-			// console.log(options, 'options');
-			this.init(this.$store.state.listInfo.repariID);
+			console.log('加载页面')
+			this.userInfo = JSON.parse(uni.getStorageSync(
+			     'admin',
+			))
+			this.currentListInfo = JSON.parse(uni.getStorageSync(
+			     'currentList',
+			))
+			this.init(this.currentListInfo.repariID);
+			
 			uni.getSystemInfo({
 				success: (res) => {
 					let height = res.windowHeight - uni.upx2px(100);
 					this.swiperHeight = height;
 				}
-				
 			})
-			
 		},
 		methods: {
 			init(repariID){
@@ -152,17 +160,18 @@
 					url: `/pro_Servers/repair/repId/${repariID}`,
 					method: 'get'
 				}).then(res => {
-					// console.log(res, 'detail')
 					if(res.status === 'ok'){
 						const data = res.t || {};
 						this.address = Position[data.position].name;
 						this.status = Status[data.repairStates].name;
-						this.isStatus = data.repairStates === 0 ? true: false
+						this.isStatus = data.repairStates === 0 ? true: false;
+						this.isFinish = data.repairStates === 3 || data.repairStates === 4? true: false;
 						this.data = Object.assign(data, {
-							user: this.$store.state.userInfo.nickName,
-							telephone: this.$store.state.userInfo.phone,
+							user: this.userInfo.nickName,
+							telephone: this.userInfo.phone,
+							expectTime: data.expectTime !== null ?data.expectTime:''
 						})
-						console.log(this.$store.state.userInfo, this.data, 'data')
+					
 					}
 				})
 				
@@ -176,6 +185,9 @@
 				this.ststus(1);
 			},
 			ststus(num){
+				// console.log(this.data.repariID , '77777');
+				const repariID = this.data.repariID;
+				// return 
 				uni.request({
 				    url: 'http://47.104.223.203:8080/pro_Servers/repair/update',
 				    header: {
@@ -186,31 +198,41 @@
 						 ...this.data,
 						 repairStates: num
 				    },
-				    success: function(res) {
-						console.log(res.data, '参数', num);
+				    success: (res)=> {
 						if(num === 1){
+							this.init(repariID);
 							this.isStatus = false;
 							console.log(this.isStatus, '状态的改变')
 						}else if(num === 3){
-							this.init(this.$store.state.listInfo.repariID);
+							console.log(this.currentListInfo, this.data, 'this.currentListInfo')
+							this.init(repariID);
 							this.isFinish = true;
 							// console.log(this.isFinish,this.data, '结束了')
 						}
+						uni.showToast({
+							title: "处理成功",
+							icon: 'success'
+						})
+						
 				    },
 				    
 				});
 				
 			},
 			goJump(value){
+				
 				if(value === 'mark') {
-					this.ststus(3);
+					console.log("添加记录")
+					uni.navigateTo({
+						url: `/pages/${value}/index`
+					}) // 添加标记
 				}else if(value === 'finish') {
 					uni.navigateTo({
 						url: `/pages/${value}/index`
 					})
 					
 				}else if(value === 'close') {
-					
+					this.ststus(3); // 已结束
 				}
 				
 			}

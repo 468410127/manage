@@ -49,6 +49,27 @@
 						this.$store.commit("SET_USER",  {
 							...res.t
 						})
+						uni.setStorage({
+						    key: 'nickName',
+						    data: res.t.nickName,
+						});
+						uni.setStorage({
+						    key: 'phone',
+						    data: res.t.phone,
+						});
+						uni.setStorage({
+						    key: 'userRole',
+						    data: res.t.userRole,
+						});
+						uni.setStorage({
+						    key: 'houserDes',
+						    data: res.t.houserDes,
+						});
+						
+						// uni.setStorage({
+						//     key: 'repariID',
+						//     data: value.repariID,
+						// });
 					}
 					uni.navigateTo({
 						url: '/pages/index/index'

@@ -49,7 +49,6 @@ import indexList from '@/components/index-list.vue' -->
 			
 		},
 		created(){
-			console.log(this.list, Position[0].name, '333333rrrrlist')
 		},
 		methods: {
 			goDetails(value){

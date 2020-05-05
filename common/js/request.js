@@ -21,7 +21,7 @@ const httpRequest = (opts, data) => {
 	let promise = new Promise(function(resolve, reject) {
         uni.request(httpDefaultOpts).then(
             (res) => {
-	console.log(res, 'res')
+	// console.log(res, 'res')
                 resolve(res[1].data)
             }
         ).catch(

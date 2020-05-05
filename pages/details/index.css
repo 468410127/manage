@@ -86,5 +86,11 @@ uni-button {
 }
 .tab-name {
 	font-size: 14px;
-	line-height: 60rpx;
+	line-height: 50rpx;
+}
+.img {
+	width: 40rpx;
+	height: 40rpx;
+	backgrund-size: cover;
+	padding-top: 10rpx;
 }
