@@ -1,9 +1,9 @@
 <template>
 	<view class="content" :style="{height: height}">
-		<image src="../../static/logo.png" class="logo"></image>
+		<image src="../../static/logo.jpg" class="logo"></image>
 		<form @submit="formSubmit" @reset="formReset">
 			<view class="input-box">
-				<input id="phone" placeholder="手机号" class="input" maxlength="11" @input="verify"/>
+				<input id="phone" placeholder="帐号" class="input" maxlength="11" @input="verify"/>
 			</view>
 			<view class="input-box">
 				<input id="password" password placeholder="请输入密码" class="input code-input" @input="verify"/>
@@ -42,7 +42,7 @@
 			},
 			login(){
 				this.$api.httpRequest({
-					url: `/pro_Servers/users/login/${this.mynote.phone}/1`,
+					url: `/pro_Servers/users/login/${this.mynote.phone}/${this.mynote.password}`,
 					method: 'POST'
 				}).then(res => {
 					if(res.status === "ok"){
