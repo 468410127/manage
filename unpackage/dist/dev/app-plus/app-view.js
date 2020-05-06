@@ -1668,7 +1668,7 @@ if(false) {}
 var ___CSS_LOADER_API_IMPORT___ = __webpack_require__(/*! ../../HBuilderX.2.6.11.20200409/HBuilderX/plugins/uniapp-cli/node_modules/css-loader/dist/runtime/api.js */ 10);
 exports = ___CSS_LOADER_API_IMPORT___(false);
 // Module
-exports.push([module.i, ".empty[data-v-6d739e94] {\n  display: -webkit-box;\n  display: -webkit-flex;\n  display: flex;\n  -webkit-box-pack: center;\n  -webkit-justify-content: center;\n          justify-content: center;\n  -webkit-box-align: center;\n  -webkit-align-items: center;\n          align-items: center;\n  width: 100%;\n  height: calc(100vh - 200rpx);\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n}\n.empty .main[data-v-6d739e94] {\n  margin: 0 auto;\n  font-size: 14px;\n  font-weight: bold;\n}\n", ""]);
+exports.push([module.i, ".empty[data-v-6d739e94] {\n  display: -webkit-box;\n  display: -webkit-flex;\n  display: flex;\n  width: 100%;\n  height: calc(100vh - 200rpx);\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n  -webkit-box-align: center;\n  -webkit-align-items: center;\n          align-items: center;\n  -webkit-box-pack: center;\n  -webkit-justify-content: center;\n          justify-content: center;\n}\n.empty .main[data-v-6d739e94] {\n  text-align: center;\n  margin: 0 auto;\n  font-size: 14px;\n  font-weight: bold;\n}\n", ""]);
 // Exports
 module.exports = exports;
 

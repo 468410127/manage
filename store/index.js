@@ -27,11 +27,24 @@ const store = new Vuex.Store({
 			 state.listInfo = data;
 			 setListInfo(data);
 		},
-		login(state) {
+		// 登陆
+		login(state, provider) {
+			
 			state.hasLogin = true;
+			// state.userInfo.token = provider.token;
+			uni.setStorage({
+				key: 'userInfo',
+				data: provider
+			})
+			// state.userInfo.userName = provider.user_name
 		},
+		// 退出登陆
 		logout(state) {
 			state.hasLogin = false;
+			state.userInfo = {};
+			uni.removeStorage({
+				key: 'userInfo'
+			})
 		},
 		changeHeadimg(state,newUrl){
 			state.userHeadimg = newUrl;

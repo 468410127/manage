@@ -38,7 +38,7 @@
 			
 		// },
 		methods: {
-			...mapMutations(['login','changeUserName']),
+			...mapMutations(['login']),
 			go(url) {
 				uni.navigateTo({
 					url: url
@@ -48,7 +48,7 @@
 			loginout(){
 				uni.clearStorageSync();
 			},
-			login(){
+			login2(){
 				let clientId = this.info && this.info.clientid;
 				let url = ''
 				if(clientId){
@@ -64,7 +64,10 @@
 						this.$store.commit("SET_USER",  {
 							...res.t
 						})
-						uni.navigateTo({
+						this.login(res.t)
+						// uni.navigateBack();
+						
+						uni.redirectTo({
 							url: '/pages/index/index'
 						})
 					}else{
@@ -86,7 +89,7 @@
 				}
 			},
 			formSubmit(e) {
-				this.login();
+				this.login2();
 			},
 			verify(e) {
 				var id = e.currentTarget.id;

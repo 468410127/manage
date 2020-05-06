@@ -27,7 +27,11 @@
 		width: 100%;
 		height: calc(100vh - 200rpx);
 		box-sizing: border-box;
+		align-items: center;
+		justify-content: center;
+		
 		.main {
+			text-align: center;
 			margin: 0 auto;
 			font-size: 14px;
 			font-weight: bold;
