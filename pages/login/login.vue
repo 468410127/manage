@@ -23,10 +23,13 @@
 				mynote: {
 					phone: "",
 					password: ""
-				}
+				},
+				info: null
 			}
 		},
 		onLoad() {
+			let info = plus.push.getClientInfo();
+			this.info = info;
 			this.height = uni.getSystemInfoSync().screenHeight-67 +"px";
 			this.loginout();
 		},
@@ -46,9 +49,7 @@
 				uni.clearStorageSync();
 			},
 			login(){
-				const clientId = uni.getStorageSync(
-			     'clientid',
-				)
+				let clientId = this.info && this.info.clientid;
 				let url = ''
 				if(clientId){
 					url =`/pro_Servers/users/login/${this.mynote.phone}/${this.mynote.password}/${clientId}`
@@ -78,7 +79,12 @@
 					
 				})
 			},
-			
+			formReset(){
+				this.mynote = {
+					phone: '',
+					password: ''
+				}
+			},
 			formSubmit(e) {
 				this.login();
 			},

@@ -3,6 +3,7 @@
 		onLaunch: function () {
 			//#ifdef APP-PLUS
 			var info = plus.push.getClientInfo();
+			console.log(info, 'info')
 			if(info && info.clientid){
 				uni.setStorage({
 					 key: 'clientid',
