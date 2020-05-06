@@ -45,7 +45,9 @@
 							<view class="list" @tap="goJump(item.path)">
 								<!-- <i class="iconfont icon-icon-test3">
 								</i> -->
-								<image :src="item.img" class="img"></image>
+								<i class="iconfont footer-icon" :class='item.img1'></i>
+								<!-- <image :src="item.img" class="img"></image> -->
+								<!-- <image :src="require(item.img1)" class="img"></image> -->
 								<view class="tab-name">
 									{{item.name}}
 								</view>
@@ -126,16 +128,19 @@
 				
 				tabList: [
 					{
+						img1:'icon-moxingguanli',
 						img: require("../../static/footer.png"),
 						name: '标记完成',
 						path: 'mark'
 					},
 					{
+						img1:'icon-xiezuo',
 						img: require("../../static/footer2.png"),
 						name: '添加记录',
 						path: 'finish'
 					},
 					{
+						img1:'icon-xiezuowendangku',
 						img: require("../../static/footer3.png"),
 						name: '关闭工单',
 						path: 'close'

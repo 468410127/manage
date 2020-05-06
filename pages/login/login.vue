@@ -77,7 +77,6 @@
 						})
 						this.login(res.t)
 						// uni.navigateBack();
-						
 						uni.redirectTo({
 							url: '/pages/index/index'
 						})
