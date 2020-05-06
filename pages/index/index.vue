@@ -106,6 +106,18 @@
 			this.getLocation();
 			uni.startPullDownRefresh();
 		},
+		onShow(){
+			uni.getSystemInfo({
+				success: (res) => {
+					let height = res.windowHeight - uni.upx2px(100);
+					this.swiperHeight = height;
+				}
+				
+			})
+			this.init();
+			this.getLocation();
+			uni.startPullDownRefresh();
+		},
 		mounted(){
 			
 		},

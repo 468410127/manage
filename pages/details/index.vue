@@ -17,10 +17,6 @@
 			<view class="main" v-if='tabIndex === 0'>
 				<view class="details-list">
 					<view class="header">
-						<!-- <view class="title">
-							返回
-						</view> -->
-						
 						<view class="title">
 							<i class="iconfont icon-icon-test7" @tap='goIndex'></i>
 							{{address}}
@@ -159,7 +155,22 @@
 			}
 		},
 		onLoad(options){
-			// console.log('加载页面')
+			this.userInfo = JSON.parse(uni.getStorageSync(
+			     'admin',
+			))
+			this.currentListInfo = JSON.parse(uni.getStorageSync(
+			     'currentList',
+			))
+			this.init(this.currentListInfo.repariID);
+			
+			uni.getSystemInfo({
+				success: (res) => {
+					let height = res.windowHeight - uni.upx2px(100);
+					this.swiperHeight = height;
+				}
+			})
+		},
+		onLoad(options){
 			this.userInfo = JSON.parse(uni.getStorageSync(
 			     'admin',
 			))
@@ -239,41 +250,69 @@
 			},
 			ststus(num,type){
 				const repariID = this.data.repariID;
-				uni.request({
-				    url: 'http://47.104.223.203:8080/pro_Servers/repair/update',
-				    header: {
-				     'content-type': 'application/x-www-form-urlencoded'
-				    },
-					method: 'POST',
-				    data: {
-						 ...this.data,
-						 repairStates: num
-				    },
-				    success: (res)=> {
-						if(num === 1){
-							this.init(repariID);
-							this.isStatus = false;
-							uni.showToast({
-								title: "接单成功",
-								icon: 'success'
-							})
-						}else if(num === 3 && type === 'close'){
-							this.init(repariID);
-							this.isFinish = true;
-							uni.showToast({
-								title: "处理成功",
-								icon: 'success'
-							})
-						}else if(num === 3 && type === 'mark'){
-							this.init(repariID);
-							this.isFinish = true;
-							uni.redirectTo({
-							    url: `/pages/index/index`
-							});
-						}
-				    },
-				});
-				
+				// uni.request({
+				//     url: 'http://47.104.223.203:8080/pro_Servers/repair/update',
+				//     header: {
+				//      'content-type': 'application/x-www-form-urlencoded'
+				//     },
+				// 	method: 'POST',
+				//     data: {
+				// 		 ...this.data,
+				// 		 repairStates: num
+				//     },
+				//     success: (res)=> {
+				// 		if(num === 1){
+				// 			this.init(repariID);
+				// 			this.isStatus = false;
+				// 			uni.showToast({
+				// 				title: "接单成功",
+				// 				icon: 'success'
+				// 			})
+				// 		}else if(num === 3 && type === 'close'){
+				// 			this.init(repariID);
+				// 			this.isFinish = true;
+				// 			uni.showToast({
+				// 				title: "处理成功",
+				// 				icon: 'success'
+				// 			})
+				// 		}else if(num === 3 && type === 'mark'){
+				// 			this.init(repariID);
+				// 			this.isFinish = true;
+				// 			uni.redirectTo({
+				// 			    url: `/pages/index/index`
+				// 			});
+				// 		}
+				//     },
+				// });
+				this.$api.httpRequest({
+					url: `/pro_Servers/repair/update`,
+					method: 'POST'
+				}, {
+					...this.data,
+					repairStates: num
+				}).then(res => {
+					if(num === 1){
+						this.init(repariID);
+						this.isStatus = false;
+						uni.showToast({
+							title: "接单成功",
+							icon: 'success'
+						})
+					}else if(num === 3 && type === 'close'){
+						this.init(repariID);
+						this.isFinish = true;
+						uni.showToast({
+							title: "处理成功",
+							icon: 'success'
+						})
+					}else if(num === 3 && type === 'mark'){
+						this.init(repariID);
+						this.isFinish = true;
+						uni.redirectTo({
+						    url: `/pages/index/index`
+						});
+					}
+				})
 			},
 			goJump(value){
 				if(value === 'mark') {
