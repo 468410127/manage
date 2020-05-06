@@ -35,6 +35,15 @@
 			this.height = uni.getSystemInfoSync().screenHeight-67 +"px";
 			this.loginout();
 		},
+		onShow() {
+			//#ifdef APP-PLUS
+			let info = plus.push.getClientInfo();
+			this.info = info;
+			//#endif
+			this.height = uni.getSystemInfoSync().screenHeight-67 +"px";
+			this.loginout();
+		},
+		
 		// mounted(){
 		// 	this.login();
 			
@@ -109,6 +118,24 @@
 					}
 				}
 			}
+		},
+		onBackPress() {
+			// uni.showModal({
+			// 	title: '提示',
+			// 	content: '是否退出当前页面？',
+			// 	success: (res) => {
+			// 		if (res.confirm) {
+			// 			uni.navigateTo({
+			// 				url: `/pages/login/login`
+			// 			})
+						
+			// 		} else if (res.cancel) {
+			// 			console.log('用户点击取消');
+			// 		}
+			// 	}
+			// });
+			return true 
+		
 		}
 	}
 </script>
