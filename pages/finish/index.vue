@@ -83,9 +83,7 @@
 				})
 			},
 			init(){
-				// this.money = +this.userInfo.repairMoney;
 				this.name = this.userInfo.name;
-				// this.user = this.$store.state.userInfo;
 				this.status = Status[this.currentListInfo.repairStates].name
 			},
 			getImgUrl(urls){
@@ -121,35 +119,55 @@
 					})
 					return false
 				}
-				
-				uni.request({
-				    url: 'http://47.104.223.203:8080/pro_Servers/repair/update',
-				    header: {
-				     'content-type': 'application/x-www-form-urlencoded'
-				    },
-					method: 'POST',
-				    data: {
-						 ...this.currentListInfo,
-						 fixImg1: this.fixImg.fixImg1?this.fixImg.fixImg1: '',
-						 fixImg2: this.fixImg.fixImg2?this.fixImg.fixImg2: '',
-						 fixImg3: this.fixImg.fixImg3?this.fixImg.fixImg3: '',
-						 fixImg4: this.fixImg.fixImg4?this.fixImg.fixImg4: '',
-						 fixImg5: this.fixImg.fixImg5?this.fixImg.fixImg5: '',
-						 repairStates: 3,
-						 repairMoney: +this.money,
+				// uni.request({
+				//     url: 'http://47.104.223.203:8080/pro_Servers/repair/update',
+				//     header: {
+				//      'content-type': 'application/x-www-form-urlencoded'
+				//     },
+				// 	method: 'POST',
+				//     data: {
+				// 		 ...this.currentListInfo,
+				// 		 fixImg1: this.fixImg && this.fixImg.fixImg1?this.fixImg.fixImg1: '',
+				// 		 fixImg2: this.fixImg && this.fixImg.fixImg2?this.fixImg.fixImg2: '',
+				// 		 fixImg3: this.fixImg && this.fixImg.fixImg3?this.fixImg.fixImg3: '',
+				// 		 fixImg4: this.fixImg && this.fixImg.fixImg4?this.fixImg.fixImg4: '',
+				// 		 fixImg5: this.fixImg && this.fixImg.fixImg5?this.fixImg.fixImg5: '',
+				// 		 repairStates: 3,
+				// 		 repairMoney: +this.money,
 						 
-				    },
-				    success: function(res) {
-						uni.showToast({
-							title: "标记成功",
-							icon: 'success'
-						})
-						uni.navigateTo({
-							url: `/pages/index/index`
-						})
-				    },
+				//     },
+				//     success: function(res) {
+				// 		uni.showToast({
+				// 			title: "标记成功",
+				// 			icon: 'success'
+				// 		})
+				// 		uni.navigateTo({
+				// 			url: `/pages/index/index`
+				// 		})
+				//     },
 				    
-				});
+				// });
+				this.$api.httpRequest({
+					url: '/pro_Servers/repair/update',
+					method: 'POST'
+				}, {
+					...this.currentListInfo,
+					 fixImg1: this.fixImg && this.fixImg.fixImg1?this.fixImg.fixImg1: '',
+					 fixImg2: this.fixImg && this.fixImg.fixImg2?this.fixImg.fixImg2: '',
+					 fixImg3: this.fixImg && this.fixImg.fixImg3?this.fixImg.fixImg3: '',
+					 fixImg4: this.fixImg && this.fixImg.fixImg4?this.fixImg.fixImg4: '',
+					 fixImg5: this.fixImg && this.fixImg.fixImg5?this.fixImg.fixImg5: '',
+					 repairStates: 3,
+					 repairMoney: +this.money
+				}).then(res => {
+					uni.showToast({
+						title: "标记成功",
+						icon: 'success'
+					})
+					uni.navigateTo({
+						url: `/pages/index/index`
+					})
+				})
 			},
 			// 点击取消
 			cancle(){

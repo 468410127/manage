@@ -160,68 +160,60 @@
 				const currentTime = `${this.date}`
 				let timestamp1 = currentTime.replace(/-/g,'/');
 				let timestamp2 = new Date(timestamp1).getTime();
-				// console.log(currentTime, 'currentTime',timestamp2, '时间戳')
-				// return
+				
 				const data = {
 					repairDes: this.text,
 					position: this.current,
 					expectTime: timestamp2, // 期望上门时间 时间戳
 					repairInfo: this.detailPosition
 				}
-				// console.log(data, currentTime,typeof currentTime, '上传的数据', '99999’')
-				
-				const requestTask1 = uni.request({
-				    url: 'http://47.104.223.203:8080/pro_Servers/repair/',
-				    header: {
-				     'content-type': 'application/x-www-form-urlencoded'
-				    },
-					method: 'POST',
-				    data: {
-						repairDes:this.text,
-						position: this.current,
-						expectTime:currentTime,
-						repairInfo:this.detailPosition,
-						repairStates:0,
-						repairImg1: this.repairImg && this.repairImg.repairImg1?this.repairImg.repairImg1: '',
-						repairImg2: this.repairImg && this.repairImg.repairImg2?this.repairImg.repairImg2: '',
-						repairImg3: this.repairImg && this.repairImg.repairImg3?this.repairImg.repairImg3: '',
-						repairImg4: this.repairImg && this.repairImg.repairImg4?this.repairImg.repairImg4: '',
-						repairImg5: this.repairImg && this.repairImg.repairImg5?this.repairImg.repairImg5: '',
-					
-				    },
-				    success: function(res) {
-				     console.log(res.data);
-					 	uni.navigateTo({
-					 		url: '/pages/index/index'
-					 	})
-				    },
-				    fail: function(res) {
-				   
-				    }
-				   });
-				
-				
-				// uni.request({  
-				//     url: 'http://47.104.223.203:8080/pro_Servers/repair/', //测试域名  
-				//     header: {'content-type': 'application/x-www-form-urlencoded'},
-				//     method: 'POST',
-				//     data: data,
-				//     success: function(result) {  
-				//         console.log(result.data, '数据');
-				//     }  
-				// });
-				
-				// this.$api.httpRequest({
-				// 	url: `/pro_Servers/repair/`,
+				// const requestTask1 = uni.request({
+				//     url: 'http://47.104.223.203:8080/pro_Servers/repair/',
+				//     header: {
+				//      'content-type': 'application/x-www-form-urlencoded'
+				//     },
 				// 	method: 'POST',
-				// }, data).then(res => {
-				// 	// console.log(res, 'res')
-				// 	// console.log(this.$store, '仓库')
-				// 	uni.navigateTo({
-				// 		url: '/pages/index/index'
-				// 	})
+				//     data: {
+				// 		repairDes:this.text,
+				// 		position: this.current,
+				// 		expectTime:currentTime,
+				// 		repairInfo:this.detailPosition,
+				// 		repairStates:0,
+				// 		repairImg1: this.repairImg && this.repairImg.repairImg1?this.repairImg.repairImg1: '',
+				// 		repairImg2: this.repairImg && this.repairImg.repairImg2?this.repairImg.repairImg2: '',
+				// 		repairImg3: this.repairImg && this.repairImg.repairImg3?this.repairImg.repairImg3: '',
+				// 		repairImg4: this.repairImg && this.repairImg.repairImg4?this.repairImg.repairImg4: '',
+				// 		repairImg5: this.repairImg && this.repairImg.repairImg5?this.repairImg.repairImg5: '',
 					
-				// })
+				//     },
+				//     success: function(res) {
+				// 	 	uni.redirectTo({
+				// 	 		url: '/pages/index/index'
+				// 	 	})
+				//     },
+				//     fail: function(res) {
+				   
+				//     }
+				// });
+				this.$api.httpRequest({
+					url: '/pro_Servers/repair/',
+					method: 'POST'
+				}, {
+					repairDes:this.text,
+					position: this.current,
+					expectTime:currentTime,
+					repairInfo:this.detailPosition,
+					repairStates:0,
+					repairImg1: this.repairImg && this.repairImg.repairImg1?this.repairImg.repairImg1: '',
+					repairImg2: this.repairImg && this.repairImg.repairImg2?this.repairImg.repairImg2: '',
+					repairImg3: this.repairImg && this.repairImg.repairImg3?this.repairImg.repairImg3: '',
+					repairImg4: this.repairImg && this.repairImg.repairImg4?this.repairImg.repairImg4: '',
+					repairImg5: this.repairImg && this.repairImg.repairImg5?this.repairImg.repairImg5: '',
+				}).then(res => {
+					uni.redirectTo({
+						url: '/pages/index/index'
+					})
+				})
 			},
 			getImgUrl(urls){
 				const qiniuUrl = this.$store.state.qiniuUrl;
@@ -232,16 +224,6 @@
 					obj['repairImg'+num] = `${qiniuUrl}${urls[i]}`
 				}
 				this.repairImg = Object.assign({}, obj)
-				// let arr = []
-				// for(let key in obj){
-				// 	console.log(obj, key, '8888')
-				// 	arr.push({
-				// 		key: obj[key]
-				// 	})
-					
-				// }
-				// this.repairImg = Object.keys(obj)
-				// console.log(arr, '99999')
 			},
 			
 			

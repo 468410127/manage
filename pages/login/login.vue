@@ -28,8 +28,10 @@
 			}
 		},
 		onLoad() {
+			//#ifdef APP-PLUS
 			let info = plus.push.getClientInfo();
 			this.info = info;
+			//#endif
 			this.height = uni.getSystemInfoSync().screenHeight-67 +"px";
 			this.loginout();
 		},

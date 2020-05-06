@@ -17,7 +17,12 @@
 			<view class="main" v-if='tabIndex === 0'>
 				<view class="details-list">
 					<view class="header">
+						<!-- <view class="title">
+							返回
+						</view> -->
+						
 						<view class="title">
+							<i class="iconfont icon-icon-test7" @tap='goIndex'></i>
 							{{address}}
 						</view>
 						<view class="status">
@@ -55,9 +60,14 @@
 				
 			</view>
 			<view class="main" v-else>
-				<block v-for="(item,index) in imgArr" :key='index'>
-					<image :src="item" class="image"></image>
-				</block>
+				<view v-if='imgArr.length'>
+					<block v-for="(item,index) in imgArr" :key='index'>
+						<image :src="item" class="image"></image>
+					</block>
+				</view>
+				<view class="empty">
+					暂无数据
+				</view>
 			</view>
 			
 		</view>
@@ -71,6 +81,7 @@
 	export default {
 		components: {
 			indexList
+			
 		},
 		data(){
 			return {
@@ -165,6 +176,12 @@
 			})
 		},
 		methods: {
+			// 返回
+			goIndex(){
+				uni.redirectTo({
+				    url: `/pages/index/index`
+				});
+			},
 			init(repariID){
 				this.$api.httpRequest({
 					url: `/pro_Servers/repair/repId/${repariID}`,
@@ -175,13 +192,12 @@
 						this.address = Position[data.position].name;
 						this.status = Status[data.repairStates].name;
 						this.isStatus = data.repairStates === 0 ? true: false;
-						console.log(this.userInfo.userRole === 2, '3333')
+						
 						if(this.userInfo.userRole === 1){
 							this.isFinish = true;
 						}else{
 							this.isFinish = data.repairStates === 3 || data.repairStates === 4? true: false;
 						}
-						console.log(data, '3333')
 						// 获取当前下单人的信息
 						
 						this.$api.httpRequest({
@@ -201,8 +217,6 @@
 								}
 							}
 						})
-						
-					
 					}
 				})
 				
@@ -218,14 +232,12 @@
 					}
 					this.imgArr = arr;
 				}
-				
-				
 			},
 			goSubmit(){
 				// 接单
 				this.ststus(1);
 			},
-			ststus(num){
+			ststus(num,type){
 				const repariID = this.data.repariID;
 				uni.request({
 				    url: 'http://47.104.223.203:8080/pro_Servers/repair/update',
@@ -245,14 +257,19 @@
 								title: "接单成功",
 								icon: 'success'
 							})
-						}else if(num === 3){
-							
+						}else if(num === 3 && type === 'close'){
 							this.init(repariID);
 							this.isFinish = true;
 							uni.showToast({
 								title: "处理成功",
 								icon: 'success'
 							})
+						}else if(num === 3 && type === 'mark'){
+							this.init(repariID);
+							this.isFinish = true;
+							uni.redirectTo({
+							    url: `/pages/index/index`
+							});
 						}
 				    },
 				});
@@ -260,17 +277,31 @@
 			},
 			goJump(value){
 				if(value === 'mark') {
-					this.ststus(3); // 标记完成
+					this.ststus(3, value); // 标记完成
 				}else if(value === 'finish') {
 					uni.navigateTo({
 						url: `/pages/${value}/index`
 					})
 				}else if(value === 'close') {
-					this.ststus(3); // 已结束
+					this.ststus(3,value); // 已结束
 				}
-				
 			}
-		}
+		},
+		onShow(){
+			this.userInfo = JSON.parse(uni.getStorageSync(
+			     'admin',
+			))
+			this.currentListInfo = JSON.parse(uni.getStorageSync(
+			     'currentList',
+			))
+			this.init(this.currentListInfo.repariID);
+			uni.getSystemInfo({
+				success: (res) => {
+					let height = res.windowHeight - uni.upx2px(100);
+					this.swiperHeight = height;
+				}
+			})
+		},
 	}
 </script>
 

@@ -5,7 +5,7 @@
 				<view class="main-fix">
 					<view class="main-header">
 						<!-- <image src="../../static/index.png" class="img"></image> -->
-						<i class="iconfont  icon-dingwei"></i>
+						<i class="iconfont  icon-icon-test5"></i>
 						<view class="name">
 						{{location}}
 						</view>
@@ -104,9 +104,13 @@
 			})
 			this.init();
 			this.getLocation();
+			uni.startPullDownRefresh();
 		},
 		mounted(){
 			
+		},
+		onPullDownRefresh() {
+		    this.init();
 		},
 		methods: {
 			init(){
@@ -121,6 +125,7 @@
 					
 					this.isUser = true;  // 业主
 				}
+				
 				this.location =this.userInfo.houserDes;
 				// this.location =this.userInfo.nickName;
 				this.$api.httpRequest({

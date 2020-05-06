@@ -16,6 +16,9 @@
 	padding: 20rpx;
 	nbackground: #fff;
 }
+.uni-list::before {
+	height: 0;
+}
 
 ./* cell-pd {
 		padding: 22rpx 30rpx;

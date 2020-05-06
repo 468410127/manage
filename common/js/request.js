@@ -1,27 +1,19 @@
 const baseUrl = 'http://47.104.223.203:8080'
 // const baseUrl = '/api'
 const httpRequest = (opts, data) => {
-	// console.log(opts, data, '请求的参数')
+	// console.log(opts, data, '1111请求的参数')
 	let httpDefaultOpts = {
 		url: baseUrl + opts.url,
 		data: data,
 		method: opts.method,
 		header: {
-			'Access-Control-Allow-Origin': '*', //跨域加上头
+			'Access-Control-Allow-Origin': '*',
 			"content-type": "application/x-www-form-urlencoded"
 		},
-		
-		
-		// url: 'http://47.104.223.203:8080/pro_Servers/repair/', //测试域名
-		//     header: {'content-type': 'application/x-www-form-urlencoded'},
-		//     method: 'POST',
-		//     data: data,
-		// dataType: 'json'
 	}
 	let promise = new Promise(function(resolve, reject) {
         uni.request(httpDefaultOpts).then(
             (res) => {
-	// console.log(res, 'res')
                 resolve(res[1].data)
             }
         ).catch(

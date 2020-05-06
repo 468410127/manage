@@ -109,3 +109,11 @@ uni-button {
 .image:nth-child(2n+0){
 	margin-right: 0;
 }
+.empty  {
+	text-ailgn: center;
+	margin: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 300rpx;
+}
