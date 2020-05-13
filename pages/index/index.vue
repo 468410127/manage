@@ -4,10 +4,11 @@
 			<view>
 				<view class="main-fix">
 					<view class="main-header">
-						<!-- <image src="../../static/index.png" class="img"></image> -->
-						<i class="iconfont  icon-icon-test5"></i>
-						<view class="name">
-						{{location}}
+						<i class="iconfont  icon-icon-test5 icon-location"></i>
+						<view class="uni-form-item uni-column">
+							<picker @change="bindPickerChange" :range="array">
+								<label class="">{{array[index]}}</label>		
+							</picker>
 						</view>
 						<i class="iconfont icon-loginout" @tap='loginout'></i>
 					</view>
@@ -91,7 +92,11 @@
 				location: '',
 				allDataList: [],
 				isUser: false,
-				userInfo: null
+				userInfo: null,
+				array: [
+				],
+				locationArr: [],
+				index: 0
 			}
 		},
 		onLoad(){
@@ -129,15 +134,12 @@
 				this.userInfo = JSON.parse(uni.getStorageSync(
 				     'admin',
 				))
-				
 				if(this.userInfo.userRole === 2){
 					this.isUser = false; // // 修理工
 					
 				}else if(this.userInfo.userRole === 1) {
-					
 					this.isUser = true;  // 业主
 				}
-				
 				this.location =this.userInfo.houserDes;
 				// this.location =this.userInfo.nickName;
 				this.$api.httpRequest({
@@ -160,24 +162,21 @@
 			// 获取用户地理位置
 			getLocation(){
 				this.$api.httpRequest({
-					url: `/pro_Servers/owner/`,
+					url: `/pro_Servers/house/`,
 					method: 'get'
 				}).then(res => {
 					const data = res.infos || [];
-					// const currentUser = data.find(item => {
-					// 	return item.ownerID === this.$store.state.userInfo.id
-					// })
+					this.array = data.map((item) => item.houseName);
+					this.locationArr = data;
 					
 				})
 			},
 			// 登出
 			loginout(){
-				console.log('登出')
 				this.$api.httpRequest({
 					url: '/pro_Servers/users/loginOut/',
 					method: 'POST'
 				}).then(res => {
-					console.log()
 					// 清除所有本地数据
 					uni.clearStorageSync();
 					uni.navigateTo({
@@ -195,7 +194,6 @@
 				this.tabIndex = index;
 				if(index == 0){
 					this.list = this.allDataList;
-					
 				}else if(index == 3){
 					this.getList(index)
 				}else if(index == 4) {
@@ -218,7 +216,6 @@
 				this.$store.commit("SET_LIST_INFO",  {
 					...value
 				})
-				console.log(value, '999')
 				uni.setStorage({
 				    key: 'repariID',
 				    data: value.repariID,
@@ -226,7 +223,17 @@
 				uni.navigateTo({
 					url: `/pages/details/index`
 				})
+			},
+			bindPickerChange(e){
+				this.index = e.target.value;
+				const currentName = this.array[this.index];
+				const currentArr = this.locationArr.find(item => {
+					return item.houseName === currentName
+				})
+				// console.log(this.array[this.index],currentArr, '777')
 			}
+			
+		
 		},
 		onBackPress() {
 			uni.showModal({

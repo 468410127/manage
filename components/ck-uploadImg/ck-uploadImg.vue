@@ -9,7 +9,6 @@
 					</view>
 				</view>
 				<view class="ck-img-add" @click="chooseImage">
-					
 					<view class="cuIcon-cameraadd"></view>
 				</view>
 			</view>

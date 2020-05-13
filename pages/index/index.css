@@ -12,7 +12,7 @@
 .main-header {
 	display: flex;
 	padding: 20rpx;
-	
+	margin-top: 20rpx;
 }
 .img {
 	width: 60rpx;
@@ -44,14 +44,14 @@
 	border-bottom: 6rpx solid #007AFF;
 	margin: auto;
 	width: 70%;
-	borer-top: 30rpx solid #007AFF;
+	borer-top: 40rpx solid #007AFF;
 	
 }
 /* .swiper-box {
 	height: 700rpx;
 } */
 .uni-tab-bar-list {
-	margin: 220rpx 0 120rpx 0;
+	margin: 240rpx 0 120rpx 0;
 	
 }
 .main-footer {
@@ -71,5 +71,10 @@ uni-button,uni-button:after  {
 }
 .dingwei {
 	font-size: 14px;
+}
+.icon-location {
+	/* border: 1px solid red; */
+	vertical-align: bottom;
+	margin-top: 5rpx;
 }
 

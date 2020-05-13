@@ -2,7 +2,7 @@
 	<view class="submit">
 		<view class="textarea">
 			<view class="uni-textarea">
-				<textarea v-model='text' placeholder="请简单描述一下保修的内容,以便我们更好的处理..." />
+				<textarea v-model='text' placeholder="请简单描述一下报修的内容,以便我们更好的处理..." />
 			</view>
 			<view class="uni-list">
 				<radio-group @change="radioChange">
@@ -14,7 +14,7 @@
 					</label>
 				</radio-group>
 			</view>
-			<input v-show='current === 1' class="uni-input" v-model='detailPosition' focus placeholder="请输入具体室外地址" />
+			<input class="uni-input" v-model='detailPosition' focus placeholder="请输入具体地址" />
 			
 		
 			<view class="uni-list">

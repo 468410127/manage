@@ -21,8 +21,13 @@
 							<i class="iconfont icon-icon-test7" @tap='goIndex'></i>
 							{{address}}
 						</view>
-						<view class="status">
-							{{status}}
+						<view class="operate">
+							<view class="status">
+								{{status}}
+							</view>
+							<view class="status" v-if='isShowRemark'  @tap="handleRemark">
+								评价
+							</view>
 						</view>
 					</view>
 					<view class="content">
@@ -46,8 +51,6 @@
 								<!-- <i class="iconfont icon-icon-test3">
 								</i> -->
 								<i class="iconfont footer-icon" :class='item.img1'></i>
-								<!-- <image :src="item.img" class="img"></image> -->
-								<!-- <image :src="require(item.img1)" class="img"></image> -->
 								<view class="tab-name">
 									{{item.name}}
 								</view>
@@ -60,29 +63,50 @@
 			<view class="main" v-else>
 				<view v-if='imgArr.length'>
 					<block v-for="(item,index) in imgArr" :key='index'>
-						<image :src="item" class="image"></image>
+						<image class="image" :src="item" :data-src="item" @tap="previewImage"></image>
 					</block>
 				</view>
-				<view class="empty">
+				<view class="empty" v-else>
 					暂无数据
 				</view>
 			</view>
-			
 		</view>
+		<view class="popup"  v-if="showPopup">
+			 <view  class="mask">
+				<view class="mask-main">
+					<view class="mask-title">
+						评价
+					</view>
+					<textarea  class="textarea" focus="true" maxlength="-1"  v-model='content' placeholder="请输入评价内容" />
+					
+				</view>
+				
+				<view class="mask-footer">
+					<button type="default" class="mask-btn" @tap="cancel">取消</button>
+					<button type="primary" class="mask-btn" @tap='submit'>确定</button>
+				</view>
+			</view>
+				
+		</view>
+		
 	</view>
 </template>
 
 <script>
 	import indexList from '@/components/index-list.vue'
+	// import uniPopup from '@/components/uni-dialog.vue'
 	import { Position,Status } from '@/common/js/enum.js';
 	
 	export default {
 		components: {
-			indexList
+			indexList,
+			
 			
 		},
 		data(){
 			return {
+				isShowRemark: false,
+				showPopup: false,
 				isFinish: false,
 				isStatus: false,
 				swiperHeight: null,
@@ -122,6 +146,10 @@
 					{
 						value: '报修内容',
 						key: 'repairDes'
+					},
+					{
+						value: '评价',
+						key: 'userComment'
 					}
 					
 				],
@@ -155,7 +183,9 @@
 				
 				currentId: null, // 当前订单id
 				currentListInfo: null, // 当前订单消息
-				imgArr: []
+				imgArr: [],
+				showDailog: false, // 是否显示弹窗
+				content: '', //
 				
 			}
 		},
@@ -192,6 +222,57 @@
 			})
 		},
 		methods: {
+			// 点击评价弹框展示
+			handleRemark(){
+				this.content = '';
+				this.showPopup = true;
+			},
+			cancel() {
+				this.content = '';
+				this.showPopup = false;
+			},
+			// 确定评价
+			submit() {
+				if(this.content){
+					this.$api.httpRequest({
+						url: '/pro_Servers/repair/addcomments',
+						method: 'POST'
+					}, {
+						comment: this.content
+					}).then(res => {
+						this.showPopup = false;
+						
+						uni.navigateTo({
+							url: '/pages/index/index'
+						})
+					}).catch(err => {
+						this.content = '';
+						this.showPopup = false;
+						uni.showToast({
+							title: "增加评价失败",
+							icon: 'none'
+						})
+						
+					})
+					
+				}else{
+					uni.showToast({
+						title: "请输入评价内容",
+						icon: 'none'
+					})
+					
+				}
+				
+			},
+			
+			// 点击可放大图片
+			previewImage: function(e) {
+				var current = e.target.dataset.src
+				uni.previewImage({
+					current: current,
+					urls: this.imgArr
+				})
+			},
 			// 返回
 			goIndex(){
 				uni.redirectTo({
@@ -214,8 +295,10 @@
 						}else{
 							this.isFinish = data.repairStates === 3 || data.repairStates === 4? true: false;
 						}
+						if(this.userInfo.userRole === 1 && data.repairStates === 3){
+							this.isShowRemark = true;
+						}
 						// 获取当前下单人的信息
-						
 						this.$api.httpRequest({
 							url: `/pro_Servers/owner/ownerID/${data.ownerID}`,
 							method: 'get'
@@ -235,7 +318,6 @@
 						})
 					}
 				})
-				
 			},
 			tabtap(index) {
 				this.tabIndex = index;
@@ -247,6 +329,7 @@
 						}
 					}
 					this.imgArr = arr;
+					console.log(this.imgArr, 'this.imgArr')
 				}
 			},
 			goSubmit(){
