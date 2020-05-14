@@ -11,13 +11,14 @@
 			<button class="button enter" type="primary" hover-class="button-hover" :disabled="isDisabled" formType="submit"> 确定 </button>
 		</form>
 		<view class="message">
+			
+			<!-- <view class="wechat">
+				企业微信公众号:
+			</view> -->
+			<image src="../../static/wechat.jpg" class="wechat-img"></image>
 			<view class="phone">
 				企业咨询电话：400-926-0409
 			</view>
-			<view class="wechat">
-				企业微信公众号:
-			</view>
-			<image src="../../static/wechat.png" class="wechat-img"></image>
 			
 		</view>
 		
@@ -166,7 +167,7 @@
 	.message {
 		/* border: 1px solid red; */
 		margin-top: 60rpx;
-		text-align: left;
+		text-align: center;
 	}
 	.wechat-img {
 		width: 180upx;

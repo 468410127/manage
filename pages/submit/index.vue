@@ -42,7 +42,7 @@
 				</view>
 			</view>
 			<upload-images @upload='upload' @returnImgUrl="getImgUrl" :token="upToken"></upload-images>
-			<!-- <ck-upload-img @returnImgUrl="getImgUrl" :initImgList="urls" :selectNum=3 :token="upToken"></ck-upload-img> -->
+			
 		</view>
 		<view class="footer">
 			<button type='primary' class="btn" @tap="submit">提交</button>
@@ -82,7 +82,8 @@
 				isRotate: false,
 				upToken:'',
 				urls:[],
-				repairImg: null
+				repairImg: null,
+				locationId: null
 			};
 		},
 		computed: {
@@ -93,7 +94,8 @@
 		            return this.getDate('end');
 		        }
 		    },
-			onLoad(){
+			onLoad(option){
+				this.locationId = option.id;
 				this.getToken();
 				
 			},
@@ -141,14 +143,12 @@
 				
 			},
 			submit(){
-				
 				if(!this.text){
 					uni.showToast({
 						icon: 'none',
 						title: '请输入内容'
 					});
 					return;
-					
 				}
 				if(this.current === 1 && !this.detailPosition){
 					uni.showToast({
@@ -167,34 +167,6 @@
 					expectTime: timestamp2, // 期望上门时间 时间戳
 					repairInfo: this.detailPosition
 				}
-				// const requestTask1 = uni.request({
-				//     url: 'http://47.104.223.203:8080/pro_Servers/repair/',
-				//     header: {
-				//      'content-type': 'application/x-www-form-urlencoded'
-				//     },
-				// 	method: 'POST',
-				//     data: {
-				// 		repairDes:this.text,
-				// 		position: this.current,
-				// 		expectTime:currentTime,
-				// 		repairInfo:this.detailPosition,
-				// 		repairStates:0,
-				// 		repairImg1: this.repairImg && this.repairImg.repairImg1?this.repairImg.repairImg1: '',
-				// 		repairImg2: this.repairImg && this.repairImg.repairImg2?this.repairImg.repairImg2: '',
-				// 		repairImg3: this.repairImg && this.repairImg.repairImg3?this.repairImg.repairImg3: '',
-				// 		repairImg4: this.repairImg && this.repairImg.repairImg4?this.repairImg.repairImg4: '',
-				// 		repairImg5: this.repairImg && this.repairImg.repairImg5?this.repairImg.repairImg5: '',
-					
-				//     },
-				//     success: function(res) {
-				// 	 	uni.redirectTo({
-				// 	 		url: '/pages/index/index'
-				// 	 	})
-				//     },
-				//     fail: function(res) {
-				   
-				//     }
-				// });
 				this.$api.httpRequest({
 					url: '/pro_Servers/repair/',
 					method: 'POST'
@@ -202,7 +174,8 @@
 					repairDes:this.text,
 					position: this.current,
 					expectTime:currentTime,
-					repairInfo:this.detailPosition,
+					repairDetailInfo:this.detailPosition,
+					locationId: this.locationId,
 					repairStates:0,
 					repairImg1: this.repairImg && this.repairImg.repairImg1?this.repairImg.repairImg1: '',
 					repairImg2: this.repairImg && this.repairImg.repairImg2?this.repairImg.repairImg2: '',

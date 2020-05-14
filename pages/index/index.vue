@@ -43,6 +43,7 @@
 					<!-- <button type='primary'>我的提交</button> -->
 				</view>
 			</view>
+			<request-loading></request-loading>
 			
 		</view>
 		
@@ -96,10 +97,12 @@
 				array: [
 				],
 				locationArr: [],
-				index: 0
+				index: 0,
+				chooseId: null
 			}
 		},
 		onLoad(){
+			this.$showLoading();
 			uni.getSystemInfo({
 				success: (res) => {
 					let height = res.windowHeight - uni.upx2px(100);
@@ -107,11 +110,12 @@
 				}
 				
 			})
-			this.init();
+			
 			this.getLocation();
 			uni.startPullDownRefresh();
 		},
 		onShow(){
+			this.$showLoading();
 			uni.getSystemInfo({
 				success: (res) => {
 					let height = res.windowHeight - uni.upx2px(100);
@@ -119,7 +123,7 @@
 				}
 				
 			})
-			this.init();
+			// this.init();
 			this.getLocation();
 			uni.startPullDownRefresh();
 		},
@@ -154,7 +158,13 @@
 					})
 					data.sort(function(a,b){return a.repairStates>b.repairStates?1:-1});
 					this.list = data;
-					this.allDataList = data;
+					
+					const chooseArr = data.filter(item => {
+						return item.locationId == this.chooseId
+					})
+					// console.log(chooseArr, 'tttt')
+					this.allDataList = Object.assign({}, chooseArr);
+					this.$hideLoading()
 					
 				})
 				
@@ -168,7 +178,9 @@
 					const data = res.infos || [];
 					this.array = data.map((item) => item.houseName);
 					this.locationArr = data;
-					
+					this.chooseId = data[0].id;
+					this.init();
+					console.log(this.chooseId, '999')
 				})
 			},
 			// 登出
@@ -191,9 +203,11 @@
 				
 			},
 			tabtap(index) {
+				this.$showLoading();
 				this.tabIndex = index;
 				if(index == 0){
 					this.list = this.allDataList;
+					this.$hideLoading();
 				}else if(index == 3){
 					this.getList(index)
 				}else if(index == 4) {
@@ -206,21 +220,26 @@
 				this.list = this.allDataList.filter(item => {
 					return item.repairStates === index
 				});
+				this.$hideLoading();
 			},
 			goSubmit(){
-				uni.navigateTo({
-					url: '/pages/submit/index'
+				uni.redirectTo({
+					url: `/pages/submit/index?id=${this.chooseId}`
 				})
 			},
 			handleJump(value){
 				this.$store.commit("SET_LIST_INFO",  {
 					...value
 				})
+				// uni.setStorage({
+				//     key: 'locationId',
+				//     data: this.chooseId
+				// });
 				uni.setStorage({
 				    key: 'repariID',
 				    data: value.repariID,
 				});
-				uni.navigateTo({
+				uni.redirectTo({
 					url: `/pages/details/index`
 				})
 			},
@@ -230,7 +249,9 @@
 				const currentArr = this.locationArr.find(item => {
 					return item.houseName === currentName
 				})
-				// console.log(this.array[this.index],currentArr, '777')
+				this.chooseId = currentArr.id;
+				this.init();
+				console.log(this.array[this.index],currentArr.id, '777')
 			}
 			
 		

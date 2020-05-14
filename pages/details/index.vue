@@ -88,6 +88,7 @@
 			</view>
 				
 		</view>
+		<request-loading></request-loading>
 		
 	</view>
 </template>
@@ -137,7 +138,7 @@
 					},
 					{
 						value: '报修地址',
-						key: 'repairInfo'
+						key: 'currentAddress'
 					},
 					{
 						value: '工单编号',
@@ -190,6 +191,7 @@
 			}
 		},
 		onLoad(options){
+			this.$showLoading();
 			this.userInfo = JSON.parse(uni.getStorageSync(
 			     'admin',
 			))
@@ -205,7 +207,7 @@
 				}
 			})
 		},
-		onLoad(options){
+		onShow(){
 			this.userInfo = JSON.parse(uni.getStorageSync(
 			     'admin',
 			))
@@ -290,6 +292,8 @@
 						this.status = Status[data.repairStates].name;
 						this.isStatus = data.repairStates === 0 ? true: false;
 						
+						// repairDetailInfo
+						
 						if(this.userInfo.userRole === 1){
 							this.isFinish = true;
 						}else{
@@ -311,8 +315,10 @@
 									this.data = Object.assign(data, {
 										user: this.nickName,
 										telephone: this.telephone,
-										expectTime: data.expectTime !== null ?data.expectTime:''
+										expectTime: data.expectTime !== null ?data.expectTime:'',
+										currentAddress: `${data.repairInfo}${data.repairDetailInfo}`
 									})
+									this.$hideLoading()
 								}
 							}
 						})
